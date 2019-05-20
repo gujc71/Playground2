@@ -1,7 +1,11 @@
 ## 우리동네, 아이랑 놀곳 Ver.서울 ##
 
-서울 시내 아이랑 갈만한 장소들을 모아서 보여 주는 웹 사이트(NodeJS + MariaDB)의 소스이다.
+이 웹사이트 소스는 웹 개발을 쉽게 하기 위해 제작한 [Project9 Express](https://github.com/gujc71/project9_exp) (Node.js Express + MariaDB) 버전을 기반으로 제작하였다.
+
+서울 시내 아이랑 갈만한 장소들을 모아서 보여 주는 웹 사이트(NodeJS + MariaDB)로
+
 지원하는 장소는 다음과 같고, 장소 데이터는 제공되지 않는다.
+
 - 실내 놀이터(키즈카페): http://www.localdata.kr/
 - 실외 놀이터: http://www.cpf.go.kr/front/sub01/sub0101.do#
   창의 놀이터: https://map.seoul.go.kr
