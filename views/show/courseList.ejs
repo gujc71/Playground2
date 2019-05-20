@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../common/htmlHead.ejs %>
+    <style>
+        .mdl-list-courseitem {
+          float:left;
+        }
+        .listitem_sub {
+          width: 95%;
+          padding: 20px;
+        }
+    </style>        
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <% include ../common/header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <ul class="demo-list-two mdl-list">
+            <%
+                rows.forEach(function(row) {
+            %>                
+                <li class="mdl-list-courseitem mdl-cell--3-col">
+                  <div class="listitem_sub">
+                    <a href='courseDetail?cmno=<%=row.CMNO%>'>
+                      <% if (row.CMIMAGE) { %>
+                        <img src="getimage/<%=row.CMIMAGE%>" style="width:99%; height: 150px"/>
+                      <% } else { %>
+                        <img src="/images/noimage2.png" style="width:99%; height: 150px"/>
+                      <% } %>
+                      <span style="display:block;text-align: center"><%=row.CMTITLE%></span>
+                    </a>
+                  </div>
+                </li>
+            <%
+                });
+            %>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

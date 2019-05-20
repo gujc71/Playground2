@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../common/htmlHead.ejs %>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+    <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
+    <script>
+      window.onload = function () {
+        const mapContainer = document.getElementById('mytown_map');
+        const sPosition = new daum.maps.LatLng(37.57590409118165, 126.97684292625047)
+        const mapOption = { 
+            center: sPosition,
+            level: 3
+        }; 
+
+        let map = new daum.maps.Map(mapContainer, mapOption);
+        displayMarker(map, sPosition);
+
+        if (navigator.geolocation) {
+          let _this = this;
+          navigator.geolocation.getCurrentPosition(function(position) {
+            let locPosition = new daum.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            this.displayMarker(map, locPosition);
+          });
+        } 
+      }
+      marker = null;
+
+      function displayMarker (map, locPosition) {
+        if (!marker) {
+          marker = new window.daum.maps.Marker({  
+            map: map, 
+            position: locPosition
+          }); 
+        } else {
+          marker.setPosition(locPosition);
+        }
+          
+        map.setCenter(locPosition);     
+        marker.setDraggable(true);	
+      } 
+
+      function handleNext() {
+        let pos = marker.getPosition();
+        location.href = "myTownMap?ib=" + pos.ib + "&jb=" + pos.jb
+      }
+    </script>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <% include ../common/header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <div style="padding: 10px">
+          지도에 표시된 마커를 이동시켜, 데이터를 조회할 위치를 지정하세요.
+          <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="handleNext()">2km 내에서 검색</button>
+        </div>
+
+        <div id="mytown_map" class="map"></div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

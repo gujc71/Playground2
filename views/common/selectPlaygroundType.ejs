@@ -1,0 +1,94 @@
+<script>
+      function ev_changeType1(type1){
+        if (activeWindow) activeWindow.close();
+        var map = null;
+        var isChecked = $(event.target).is(":checked") === true;
+        if (isChecked) map = markerInfo.map;
+        markerInfo.markerList.forEach(function(marker) {
+          if (marker.place.PGTYPE1===type1) {
+            marker.setMap(map);
+          }
+        });
+        $("input[id='placetype" + type1 + "']").prop("checked", isChecked);
+
+      }
+
+      function ev_changeType2(type1, type2){
+        if (activeWindow) activeWindow.close();
+        var map = null;
+        if ($(event.target).is(":checked") === true) map = markerInfo.map;
+        markerInfo.markerList.forEach(function(marker) {
+          if (marker.place.PGTYPE1===type1 & marker.place.PGTYPE2===type2) {
+            marker.setMap(map);
+          }
+        });
+      }  
+</script>
+              <div style="display:inline-block; width: 100px">
+              <label>
+                <input type="checkbox" id="placetype" name="placetype" checked onclick="ev_changeType1('A')">
+                <span style="color:red">실내 놀이터</span>
+              </label><br/>              
+              <label>
+                  <input type="checkbox" id="placetypeA" name="placetype" checked onclick="ev_changeType2('A', 'B')">
+                  <span class="mdl-checkbox__label">대형</span>
+              </label><br/>
+              <label>
+                  <input type="checkbox" id="placetypeA" name="placetype" checked onclick="ev_changeType2('A', '')">
+                  <span class="mdl-checkbox__label">일반</span>
+              </label>              
+            </div>
+            <div style="display:inline-block; width: 100px">
+              <label>
+                <input type="checkbox" id="placetype" name="placetype" checked onclick="ev_changeType1('B')">
+                <span style="color:#1291c3">실외 놀이터</span>
+              </label><br/>              
+              <label>
+                <input type="checkbox" id="placetypeB" name="placetype" checked onclick="ev_changeType2('B', 'N')">
+                  <span class="mdl-checkbox__label">창의</span>
+              </label><br/>
+              <label>
+                <input type="checkbox" id="placetypeB" name="placetype" checked onclick="ev_changeType2('B', '')">
+                  <span class="mdl-checkbox__label">일반</span>
+              </label>              
+            </div>
+            <div style="display:inline-block; width: 140px">
+              <label>
+                <input type="checkbox" id="placetype" name="placetype" checked onclick="ev_changeType1('C')">
+                <span style="color:purple">박물관/미술관</span>
+              </label><br/>              
+              <label>
+                <input type="checkbox" id="placetypeC" name="placetype" checked onclick="ev_changeType2('C', '공립')">
+                  <span class="mdl-checkbox__label">공립</span>
+              </label>
+              <label>
+                <input type="checkbox" id="placetypeC" name="placetype" checked onclick="ev_changeType2('C', '국립')">
+                  <span class="mdl-checkbox__label">국립</span>
+              </label><br/>        
+              <label>
+                <input type="checkbox" id="placetypeC" name="placetype" checked onclick="ev_changeType2('C', '대학')">
+                  <span class="mdl-checkbox__label">대학</span>
+              </label>              
+              <label>
+                <input type="checkbox" id="placetypeC" name="placetype" checked onclick="ev_changeType2('C', '사립')">
+                  <span class="mdl-checkbox__label">사립</span>
+              </label>              
+            </div>            
+            <div style="display:inline-block; width: 140px">
+              <label>
+                <input type="checkbox" id="placetype" name="placetype" checked onclick="ev_changeType1('D')">
+                <span style="color:#e373f5b3">도서관</span>
+              </label><br/>              
+              <label>
+                <input type="checkbox" id="placetypeD" name="placetype" checked onclick="ev_changeType2('D', '공공')">
+                  <span class="mdl-checkbox__label">공공</span>
+              </label>
+              <label>
+                <input type="checkbox" id="placetypeD" name="placetype" checked onclick="ev_changeType2('D', '작은')">
+                  <span class="mdl-checkbox__label">작은</span>
+              </label><br/>        
+              <label>
+                <input type="checkbox" id="placetypeD" name="placetype" checked onclick="ev_changeType2('D', '장애인')">
+                  <span class="mdl-checkbox__label">장애인</span>
+              </label>              
+            </div>            

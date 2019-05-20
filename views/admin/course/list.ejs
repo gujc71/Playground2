@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../../common/htmlHead.ejs %>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <% include ../header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <ul class="demo-list-two mdl-list">
+            <%
+                rows.forEach(function(row) {
+            %>                
+                <li class="mdl-list__item mdl-list__item--two-line">
+                    <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-avatar">explore</i>
+                        <span><a href='form?cmno=<%=row.CMNO%>'><%=row.CMTITLE%></a></span>
+                    </span>
+                    <span class="mdl-list__item-secondary-content"><%=row.UPDATEDATE%></span>
+                </li>
+            <%
+                });
+            %>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
+    <a class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="form">
+      <i class="material-icons">add</i>
+    </a>
+  </div>
+</body>
+</html>

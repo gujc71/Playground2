@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <% include ./common/htmlHead.ejs %>
+    <style>
+      .demo-card-wide .mdl-card {
+        width: 512px;
+      }
+      .demo-card-wide > .mdl-card__title {
+        height: 176px;
+        background: url('/images/welcome_card.jpg') center / cover;
+      }
+      .demo-card-wide > .mdl-card__menu {
+        color: #fff;
+      }
+    </style>
+    <script>
+      function formSubmit(){
+        var snackbarLogin = document.querySelector('#snackbarLogin');
+        if ($("#userid").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter your ID.',timeout: 2000});        
+          return;
+        }
+        if ($("#userpw").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter a password.',timeout: 2000});        
+          return;
+        }
+        $("#inputForm").submit();
+      }
+    </script>
+  </head>
+  <body>
+      <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+          <div class="demo-ribbon"></div>
+          <main class="demo-main mdl-layout__content">
+            <div class="demo-container mdl-grid">
+              <div class="mdl-cell mdl-cell--4-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+                <div class="demo-container mdl-grid mdl-cell  mdl-cell--4-col">
+                    <div class="demo-card-wide mdl-card1 mdl-shadow--2dp">
+                      <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Welcome</h2>
+                      </div>
+                      <div class="mdl-card__supporting-text">
+                        <form action="loginChk" id="inputForm"  method="post">
+                            <div class="mdl-textfield mdl-js-textfield">
+                              <input class="mdl-textfield__input" type="text" id="userid" name="userid">
+                              <label class="mdl-textfield__label" for="userid">ID</label>
+                            </div>
+                            <div class="mdl-textfield mdl-js-textfield">
+                              <input class="mdl-textfield__input" type="password" id="userpw" name="userpw">
+                              <label class="mdl-textfield__label" for="userpw">Password</label>
+                            </div>
+                        </form>                        
+                      </div>
+                      <div class="mdl-card__actions mdl-card--border">
+                        <button class="mdl-button mdl-js-button" onclick="formSubmit()">Login</button>
+                      </div>
+                    </div>
+                </div>                 
+            </div>
+          </main>
+        </div>
+        <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button"></button>
+        </div>        
+  </body>
+</html>

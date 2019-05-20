@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../../common/htmlHead.ejs %>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+    <script src="/javascripts/daumMap.js"></script>   
+    <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
+    <script>
+      var markerInfo = null;
+
+      window.onload = function () {
+        var placelist = <%-JSON.stringify(placelist).replace(/null/gi, '""')%>;
+        var centerPos = {ib:'126.97684292625047', jb:'37.57590409118165'};
+
+        var positions = [];
+
+        placelist.forEach(function(place) {
+          var content = getMarker(place);
+          var posInfo =  {
+            content: content, 
+            latlng: new daum.maps.LatLng(place.PGLON, place.PGLAT),
+            place: place
+          };
+          positions.push(posInfo);
+        });
+        
+
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions);
+
+        $("input[name='placetype']").prop("checked", true);
+      }
+
+      function ev_listClick() {
+        if ($( "#listbox" ).css( "display" )==="none")
+             $("#listbox").show();
+        else $("#listbox").hide();
+      }
+
+      function ev_listitemClick(no){
+        var i;
+        var map = markerInfo.map;
+        var markerList = markerInfo.markerList;
+        for (i = 0; i < markerList.length; i++) {
+          if (markerList[i].place.PGNO===no) {
+            map.panTo(markerList[i].getPosition() );   
+            if (activeWindow) activeWindow.close();
+            activeWindow = markerList[i].infowindow;
+            activeWindow.open(map, markerList[i]);  
+            markerList[i].setMap(map);
+            break;
+          }
+        }
+      }
+    </script>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <% include ../header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="demo-content mdl-grid mdl-color--white mdl-shadow--2dp">
+        <div style="padding: 10px">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--raised" onclick="ev_listClick()" style="vertical-align: top;margin-right: 20px;">
+                <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">menu</i>
+            </button>
+            <% include ../../common/selectPlaygroundType.ejs %>
+          
+          <div id="listbox">
+            <ul class="demo-list-item mdl-list">
+              <% placelist.forEach(function(place) { %>
+                <li class="mdl-list__item"  title="<%= place.PGNAME %>">
+                  <span class="mdl-list__itemtext" onclick="ev_listitemClick('<%= place.PGNO %>')">
+                      <%= place.PGNAME %>  
+                  </span>
+                </li>
+              <% }) %>  
+              </ul>            
+          </div>
+        </div>
+        
+        <div id="mytown_map" class="map"></div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

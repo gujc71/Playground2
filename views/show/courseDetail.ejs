@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../common/htmlHead.ejs %>
+      <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+      <script src="/javascripts/daumMap.js"></script>   
+      <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
+      <style>
+        .mdl-list__item > span {
+            width: 100px;
+        }
+        .placeAvarta {
+          float: none;
+          display:block;
+          margin: auto;
+        }
+        .mdl-list-courseitem {
+          float:left;
+        }
+        .mdl-list-courseitem-text {
+          text-align: center;
+          margin-top: 10px;
+          float: left;
+          width: 100%; 
+          overflow: hidden; 
+          white-space: nowrap; 
+          text-overflow: ellipsis;          
+        }
+    </style>   
+    
+    <script>
+      var markerInfo = null;
+
+      window.onload = function () {
+        var dtlList = <%-JSON.stringify(dtlList).replace(/null/gi, '""')%>;
+        var centerPos = {ib:<%=mapInfo.ib%>, jb:<%=mapInfo.jb%>};
+        var positions = [];
+
+        dtlList.forEach(function(place) {
+          var content = getMarker(place);
+          var posInfo =  {
+            content: content, 
+            latlng: new daum.maps.LatLng(place.PGLON, place.PGLAT),
+            place: place
+          };
+          positions.push(posInfo);
+        });
+        
+
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions);
+
+        $("input[name='placetype']").prop("checked", true);
+
+        $('main').scroll(scrollFunction);
+      }      
+
+      function scrollFunction() {
+          if ( $('main').scrollTop() > 50 ) {
+            $("#toTop").show();
+          } else {
+            $("#toTop").hide();
+          }
+        
+      }
+
+      function ev_toTop() {
+        $('main').animate({ scrollTop: 0 }, 'slow');
+      } 
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <% include ../common/header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+              <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><%=mstInfo.CMTITLE%></h2>
+              </div>              
+              <ul class="demo-list-two mdl-list" id="listUL">
+                  <%
+                      dtlList.forEach(function(row) {
+                  %>                
+                      <li class="mdl-list-courseitem mdl-cell--2-col" id="<%=row.PGNO%>">
+                        <div class="placeAvarta">
+                          <i class="material-icons mdl-list__item-avatar noRound"><%=row.CODENM%></i>
+                        </div>
+                        <span class="mdl-list-courseitem-text" title="<%=row.PGNAME%>"><a href='/board/read?brdno=<%=row.PGNO%>'><%=row.PGNAME%></a></span>
+                      </li>
+                  <%
+                      });
+                  %>
+              </ul>                
+        </div>
+
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <span><%-mstInfo.CMDESC%></span>
+        </div>  
+        
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+          <div id="mytown_map" class="map" style="width: 100%; height: 500px;"></div>      
+        </div>
+      </main>
+    </div>
+
+    <div id="toTop" style="bottom: 30px;position: absolute;right: 30px; z-index:99; display:none;">
+      <a class="mdl-button mdl-js-button mdl-button--fab " style="width:30px;height: 30px;min-width:30px;" onclick="ev_toTop()">
+        <i class="material-icons">arrow_upward</i>
+      </a>
+    </div>
+  </body>
+</html>

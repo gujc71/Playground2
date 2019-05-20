@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../../common/htmlHead.ejs %>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+      <script src="/javascripts/dialog-polyfill.js"></script>
+      <script src="/javascripts/ckeditor.js"></script>      
+    <script>
+      var cmdescEditor;
+      window.onload = function () {
+        dialog = document.querySelector('dialog');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+        BalloonEditor.create( document.querySelector( '#cmdescEditor' ) )
+            .then( editor => {
+              cmdescEditor= editor;
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+      }         
+      function formSubmit(){
+        var snackbarLogin = document.querySelector('#snackbarLogin');
+        if ($("#cmtitle").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '코스명을 입력하세요.',timeout: 2000});        
+          return;
+        }
+        $("#cmdesc").val(cmdescEditor.getData());
+        if ($("#cmdesc").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '코스에 대한 상세 설명을 입력하세요.',timeout: 2000});        
+          return;
+        }
+        $("#inputForm").submit();
+      }
+
+      function ev_deleteClick(){
+        if (!confirm("삭제하시겠습니까?")) {
+          return;
+        }        
+        $("#inputForm").attr("action", "delete");
+        $("#inputForm").submit();        
+      }
+
+      function ev_add(){
+        dialog.showModal();
+      }
+
+      function ev_searchClick(){
+        $( "#listDiv li" ).remove();
+        $.ajax({
+          type: "GET",
+          url: "getList",
+          data: {keyword: $('#keyword').val()},
+          success: function(r){
+            r.rows.forEach(function(row) {
+              var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
+              var html = '<span class="mdl-list__item-primary-content width100">' +
+                          '<span>' + row.PGNAME + '</span>' +
+                          '<span class="mdl-list__item-sub-title">' + row.PGADDR + '</span>' +
+                          '</span>';
+              li.html(html);
+              $('#listDiv').append(li);
+              li.bind( "dblclick", function() {
+                fn_addCourse(row);
+              });            
+            });
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        });     
+      }
+      function fn_addCourse(row){
+        if ($("#"+row.PGNO).length > 0) {
+          alert("이미 추가한 시설/장소 입니다.");
+          return;
+        }
+        $.ajax({
+          type: "POST",
+          url: "courseItemSave",
+          data: {cmno:'<%=mstInfo.CMNO%>', pgno:row.PGNO},
+          success: function(r){
+            location.reload();
+            /*var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
+            var html = '<span class="mdl-list__item-primary-content">' +
+                        '<span><a href="/adplace/read?pgno=' + row.PGNO + '">' + row.PGNAME + '</a></span>' +
+                        '<span class="mdl-list__item-sub-title">' + row.PGADDR + '</span>' +
+                        '</span>';
+            li.html(html);
+            li.attr('id', row.PGNO);
+            $('#listUL').append(li);      */
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        });
+      }      
+
+      function ev_deleteCourse(pgno) {
+        if (!confirm("삭제하시겠습니까?")) {
+          return;
+        }
+        $.ajax({
+          type: "POST",
+          url: "courseItemDelete",
+          data: {cmno:'<%=mstInfo.CMNO%>', pgno:pgno},
+          success: function(r){
+            $('#' + pgno).remove();
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        });
+      }
+
+      function ev_showhide(isshow) {
+        $.ajax({
+          type: "POST",
+          url: "setCourseShow",
+          data: {cmno:'<%=mstInfo.CMNO%>', cmshow:isshow==="Y"?"N":"Y"},
+          success: function(r){
+            location.reload();
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        });
+      }
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <% include ../header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+          <form action="save" id="inputForm" method="post" style="width: 100%;" enctype="multipart/form-data">
+            <input type="hidden" name="cmno" value="<%=mstInfo.CMNO%>"> 
+              <ul class="demo-list-item mdl-list">
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">코스명</span>
+                    <input class="mdl-textfield__input" type="text" id="cmtitle" name="cmtitle" value="<%=mstInfo.CMTITLE%>">
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">설명</span>
+                    <textarea id="cmdesc" name="cmdesc" rows="5" cols="60" style="display:none"></textarea>
+                    <div id="cmdescEditor" style="width: 97%; height: 300px; border-bottom: 1px solid rgba(0,0,0,.12)"><%-mstInfo.CMDESC%></div>
+                </li>
+                <li class="mdl-list__item">
+                  <span class=" width100">대표 이미지</span>
+                  <input accept="image/*" id="cmimage" name="cmimage" type="file"/>
+              </li>
+            </ul>
+              <div class="mdl-card__actions mdl-card--border">
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                      <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
+                  <% if (mstInfo.CMNO) {%>                        
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="ev_deleteClick()">
+                      <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i> 삭제</a>
+
+                    <button type="button" class="mdl-button mdl-js-button " onclick="ev_showhide('<%= mstInfo.CMSHOW%>')" >사용자에게 <%= mstInfo.CMSHOW==='Y' ? "감추기":"보이기"%></button>
+                      
+                    <a href="courseMap?cmno=<%=mstInfo.CMNO%>" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin-left: 200px;" target="_blank"><i class="material-icons">map</i> 지도에서 보기</a>
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin-left: 200px;"onclick="ev_add()" ><i class="material-icons">add</i> 추가</button>
+                  <% }%>
+              </div>
+          </form>
+        </div>
+
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <ul class="demo-list-two mdl-list" id="listUL">
+                <%
+                    dtlList.forEach(function(row) {
+                %>                
+                    <li class="mdl-list__item mdl-list__item--two-line" id="<%=row.PGNO%>">
+                        <span class="mdl-list__item-primary-content">
+                          <div class="placeAvarta">
+                            <i class="material-icons mdl-list__item-avatar noRound"><%=row.CODENM%></i>
+                          </div>
+                          <span><a href='/board/read?brdno=<%=row.PGNO%>'><%=row.PGNAME%></a></span>
+                          <span class="mdl-list__item-sub-title"><%=row.PGADDR%></span>
+                        </span>
+                        <span class="mdl-list__item-secondary-content">
+                          <button type="button" class="mdl-button mdl-js-button" style="margin-left: 200px;"onclick="ev_deleteCourse('<%=row.PGNO%>')" ><i class="material-icons">clear</i></button>
+                        </span>
+                    </li>
+                <%
+                    });
+                %>
+            </ul>
+          </div>        
+      </main>
+    </div>
+
+    <dialog class="mdl-dialog " style="width: 500px;">
+        <div class="mdl-dialog__content">
+            <div class="mdl-cell--12-col">
+              <h6>추가할 시설/장소를 검색한 후, 리스트에서 두번 클릭하여 추가하세요.</h6>
+            </div>
+            <div class="mdl-cell--12-col">
+              <div class="mdl-cell--10-col" style="display: inline-block">
+                <input class="mdl-textfield__input" type="text" id="keyword" />
+              </div>
+              <div class="mdl-cell--2-col" style="display: inline-block">
+                <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="ev_searchClick()" ><i class="material-icons">search</i> </button>
+              </div>
+            </div>    
+            <div class="mdl-cell--12-col" id="listDiv" style="height: 200px;overflow-y:scroll">
+            </div>   
+        </div>
+        <div class="mdl-dialog__actions">
+          <button type="button" class="mdl-button close">닫기</button>
+        </div>
+    </dialog>    
+
+    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>     
+  </body>
+</html>

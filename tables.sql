@@ -1,0 +1,81 @@
+CREATE TABLE COM_USER(
+  USERNO 	INT(11) NOT NULL AUTO_INCREMENT COMMENT '사용자 번호',
+  USERID 	VARCHAR(20)						COMMENT 'ID',
+  USERNM 	VARCHAR(20)						COMMENT '사용자 이름',   -- or 가게이름
+  USERPW 	VARCHAR(100)					COMMENT '비밀번호',
+  USERROLE	CHAR(1)							COMMENT '권한',
+  PHOTO 	VARCHAR(50)						COMMENT '사진',
+  ENTRYDATE DATETIME						COMMENT '작성일자',
+  DELETEFLAG CHAR(1)						COMMENT '삭제 여부',
+  PRIMARY KEY (USERNO)
+) ;
+
+/*------------------------------------------*/
+
+INSERT INTO `com_user` (`USERNO`, `USERID`, `USERNM`, `USERPW`, `USERROLE`, `PHOTO`, `ENTRYDATE`, `DELETEFLAG`) VALUES
+	(1, 'admin', 'admin', SHA2('admin', 256), 'A', NULL, now(), 'N'),
+	(2, 'user1', 'Lee SunSin', SHA2('user1', 256), 'U', NULL, now(), 'N'),
+	(3, 'user2', 'So SiNo', SHA2('user2', 256), 'U', NULL, now(), 'N');
+
+/* ========================================================================= */
+
+CREATE TABLE TBL_PLAYGROUND (
+	PGNO 	VARCHAR(10)		COMMENT '장소NO',
+	PGNAME 	VARCHAR(50)		COMMENT '장소명',
+  PGLAT 	FLOAT(10,7)	COMMENT '위도',		
+  PGLON 	FLOAT(10,7)	COMMENT '경도',
+  PGURL 	VARCHAR(120)  COMMENT 'URL',
+  PGTEL 	VARCHAR(50)  COMMENT '전화',
+  PGADDR 	VARCHAR(70)		COMMENT '주소',
+  PGTYPE1 	CHAR(1)		COMMENT '장소 종류', -- A: 키즈카페, b: 놀이터, C: 박물관
+  PGTYPE2 	CHAR(6)		COMMENT '장소 종류',
+  PGSIZE		FLOAT		COMMENT '소재지면적',
+  PGPRICE 	VARCHAR(300)  COMMENT '가격',
+  PGDESC		VARCHAR(1600) COMMENT '개요/설명',
+  PGEXTRA1 	VARCHAR(200)		COMMENT '기타정보',
+  PGEXTRA2 	VARCHAR(200)		COMMENT '기타정보',
+  PGEXTRA3 	VARCHAR(2000)		COMMENT '기타정보',
+  UPDATEDATE  DATETIME			COMMENT '수정일자',
+  DELETEFLAG 	CHAR(1)				COMMENT '삭제'
+);
+
+ALTER TABLE TBL_PLAYGROUND ADD CONSTRAINT INX_PLAYGROUND    PRIMARY KEY (PGNO);
+
+
+-- DROP TABLE TBL_COURSEMST;
+    
+CREATE TABLE TBL_COURSEMST (
+	CMNO 	      INT		        	COMMENT '경로 master NO',
+	CMTITLE     VARCHAR(50)			COMMENT '경로 제목',
+  CMDESC 	    VARCHAR(1000)		COMMENT '설명',
+  CMIMAGE	 	  VARCHAR(50)			COMMENT '대표이미지',
+  CMSHOW	 	  CHAR(1)			    COMMENT '사용자에게 출력여부',
+  UPDATEDATE  DATETIME	    	COMMENT '수정일자',
+  DELETEFLAG 	CHAR(1)		    	COMMENT '삭제',
+	PRIMARY KEY (CMNO)
+);
+
+
+-- DROP TABLE TBL_COURSEDTL ;
+
+CREATE TABLE TBL_COURSEDTL (
+	CDNO 	INT		NOT NULL AUTO_INCREMENT COMMENT '경로 detail NO',
+	CMNO 	INT			    	COMMENT '경로 master NO',
+	PGNO 	VARCHAR(10)		COMMENT '장소NO',
+    
+	PRIMARY KEY (CDNO)
+);
+
+CREATE TABLE COM_CODE(
+  CLASSNO     	VARCHAR(4)      COMMENT '대분류',
+  CODECD 	      VARCHAR(10)     COMMENT '코드',
+  CODENM 	      VARCHAR(30)     COMMENT '코드명',
+  PRIMARY KEY (CLASSNO, CODECD)
+) ;
+
+INSERT INTO COM_CODE(CLASSNO, CODECD, CODENM) VALUES('e', 'A', 'home');
+INSERT INTO COM_CODE(CLASSNO, CODECD, CODENM) VALUES('e', 'B', 'accessibility');
+INSERT INTO COM_CODE(CLASSNO, CODECD, CODENM) VALUES('e', 'C', 'account_balance');
+INSERT INTO COM_CODE(CLASSNO, CODECD, CODENM) VALUES('e', 'D', 'library_books');
+INSERT INTO COM_CODE(CLASSNO, CODECD, CODENM) VALUES('e', 'Z', 'tag_faces');
+

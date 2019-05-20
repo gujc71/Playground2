@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../../common/htmlHead.ejs %>
+    <script>
+      var page=1, isLoading = false;
+      function ev_new(){
+          location.href="form";
+      }
+
+      function ev_onScroll(){
+        if (isLoading) return;
+
+        var list = event.target;
+        if ( (list.scrollTop) < (list.scrollHeight - list.offsetHeight-50) ) return;
+
+        isLoading = true;
+        $.ajax({
+          type: "GET",
+          url: "getList",
+          data: {pgtype1: '<%=pgtype1%>', page:++page, keyword: $('#keyword').val()},
+          success: function(r){
+            r.rows.forEach(function(row) {
+              var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
+              var html = '<span class="mdl-list__item-primary-content">' +
+                         '<span><a href="/adplace/form?pgno=' + row.PGNO + '">' + row.PGNAME + '</a></span>' +
+                         '<span class="mdl-list__item-sub-title">' + row.PGADDR + '</span>' +
+                         '</span>';
+              li.html(html);
+              $('#listUL').append(li);
+            });
+
+            isLoading = ! r.rows.length>0;
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        }); 
+      }
+      function ev_searchClick(){
+        location.href="list?pgtype1="+$('#pgtype1').val()+"&keyword="+$('#keyword').val();
+      }
+    </script>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <% include ../header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100" onScroll="ev_onScroll()">
+      <div class="mdl-grid demo-content">
+        <div style="display:inline-block;">
+              <select id="pgtype1">
+              <option value="A" <%=pgtype1==="A"?"selected":""%>>실내 놀이터</option>
+              <option value="B" <%=pgtype1==="B"?"selected":""%>>실외 놀이터</option>
+              <option value="C" <%=pgtype1==="C"?"selected":""%>>박물관/미술관</option>
+              <option value="D" <%=pgtype1==="D"?"selected":""%>>도서관</option>
+              <option value="Z" <%=pgtype1==="Z"?"selected":""%>>기타</option>
+              <option value="" <%=pgtype1===""?"selected":""%>>전체</option>
+            </select>         
+        </div>
+        <div class="mdl-textfield1" style="margin: 0 10px">
+            <input class="mdl-textfield__input" type="text" id="keyword" value='<%=keyword%>'/>
+        </div>      
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="ev_searchClick()" ><i class="material-icons">search</i> 검색</button>
+
+        <a href="listMap?pgtype1=<%=pgtype1%>" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin-left:100px;"><i class="material-icons">map</i> 지도에서 보기</a>
+      </div>
+
+      <div class="demo-content mdl-color--white mdl-shadow--2dp">
+        <ul id="listUL"  class="demo-list-two mdl-list">
+            <%
+                rows.forEach(function(row) {
+            %>                
+                <li class="mdl-list__item mdl-list__item--two-line">
+                    <span class="mdl-list__item-primary-content">
+                        <span><a href='form?pgno=<%=row.PGNO%>'><%=row.PGNAME%></a></span>
+                        <span class="mdl-list__item-sub-title"><%=row.PGADDR%></span>
+                    </span>
+                    <!--span class="mdl-list__item-secondary-content"><%=row.PGTEL%></span-->
+                </li>
+            <%
+                });
+            %>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="ev_new()">
+      <i class="material-icons">add</i>
+    </button>
+  </div>
+</body>
+</html>

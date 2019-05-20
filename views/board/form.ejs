@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../common/htmlHead.ejs %>
+    <script>
+      function formSubmit(){
+        var snackbarLogin = document.querySelector('#snackbarLogin');
+        if ($("#brdtitle").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter board title.',timeout: 2000});        
+          return;
+        }
+        if ($("#brdmemo").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter board contents.',timeout: 2000});        
+          return;
+        }
+        $("#inputForm").submit();
+      }
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <% include ../common/header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+          <form action="save" id="inputForm" method="post" style="width: 100%;">
+            <input type="hidden" name="brdno" value="<%=row.BRDNO%>"> 
+              <ul class="demo-list-item mdl-list">
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">Title</span>
+                    <input class="mdl-textfield__input" type="text" id="brdtitle" name="brdtitle" value="<%=row.BRDTITLE%>">
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">Contents</span>
+                    <textarea class="mdl-textfield__input" id="brdmemo" name="brdmemo" rows="5" cols="60"><%=row.BRDMEMO%></textarea>
+                </li>
+              </ul>
+                <div class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="history.back(-1)">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">arrow_back</i></a>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
+                </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>     
+  </body>
+</html>

@@ -1,0 +1,37 @@
+      <header class="demo-header mdl-layout__header">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">우리동네, 아이랑 놀곳 Ver.서울</span>
+        </div>
+      </header>
+      <div class="demo-drawer mdl-layout__drawer">
+        <header class="demo-drawer-header">
+          <% if (userno !== null & userno !== undefined) { %> 
+            <i class="material-icons mdl-list__item-avatar">person</i>
+            <div class="demo-avatar-dropdown">
+              <span><%=usernm%></span>
+              <div class="mdl-layout-spacer"></div>
+              <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                <i class="material-icons" role="presentation">arrow_drop_down</i>
+                <span class="visuallyhidden">Accounts</span>
+              </button>
+              <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+                <li class="mdl-menu__item"><a class="mdl-navigation__link" href="/users/profile">Profile</a></li>
+                <li class="mdl-menu__item"><a class="mdl-navigation__link" href="/users/Logout">Logout</a></li>
+              </ul>
+            </div>
+          <% } else { %> 
+            <div class="demo-avatar-dropdown">
+              <img src="/images/logo.png" style="display: block;margin: 0px auto;"/>
+            </div>
+          <% } %> 
+        </header>
+        <nav class="demo-navigation mdl-navigation">
+          <!--a class="mdl-navigation__link" href="/index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a-->
+          <% if (userno !== null & userno !== undefined) { %> 
+            <a class="mdl-navigation__link" href="/board"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Board</a>
+          <% } %>
+          <a class="mdl-navigation__link" href="/show/myTown"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>우리동네</a>
+          <a class="mdl-navigation__link" href="/show/courseList"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">explore</i>추천 코스</a>
+          <div class="mdl-layout-spacer"></div>
+        </nav>
+      </div>

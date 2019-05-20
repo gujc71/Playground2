@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../common/htmlHead.ejs %>
+     
+    <script>
+    function ev_new(){
+        location.href="form";
+    }
+    </script>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <% include ../common/header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <ul class="demo-list-two mdl-list">
+            <%
+                rows.forEach(function(row) {
+            %>                
+                <li class="mdl-list__item mdl-list__item--two-line">
+                    <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-avatar">person</i>
+                        <span><a href='read?brdno=<%=row.BRDNO%>'><%=row.BRDTITLE%></a></span>
+                        <span class="mdl-list__item-sub-title"><%=row.BRDWRITER%></span>
+                    </span>
+                    <span class="mdl-list__item-secondary-content"><%=row.BRDDATE%></span>
+                </li>
+            <%
+                });
+            %>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="ev_new()">
+      <i class="material-icons">add</i>
+    </button>
+  </div>
+</body>
+</html>

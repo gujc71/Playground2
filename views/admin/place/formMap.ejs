@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+    <style>
+    .map {
+      display: block;
+      width: 100%;
+      height: 85vh;
+    }
+    </style>      
+    <script>
+      var map;
+
+      window.onload = function(){
+        const mapContainer = document.getElementById('mytown_map');
+        const sPosition = new daum.maps.LatLng(37.57590409118165, 126.97684292625047);
+        const mapOption = { 
+            center: sPosition,
+            level: 3
+        }; 
+
+        map = new daum.maps.Map(mapContainer, mapOption);
+      }
+
+      function loadMap(pglat, pglon) {
+        if (!pglon) pglon = 37.57590409118165;
+        if (!pglat) pglat = 126.97684292625047;
+        const sPosition = new daum.maps.LatLng(pglon, pglat);
+        displayMarker(map, sPosition);
+      }
+      marker = null;
+
+      function displayMarker (map, locPosition) {
+        if (!marker) {
+          marker = new window.daum.maps.Marker({  
+            map: map, 
+            position: locPosition
+          }); 
+        } else {
+          marker.setPosition(locPosition);
+        }
+          
+        map.setCenter(locPosition);     
+//        map.panTo(locPosition); 
+        marker.setDraggable(true);	
+      } 
+
+      function getPosition() {
+        let pos = marker.getPosition();
+        return pos;//.ib + "&jb=" + pos.jb
+      }
+    </script>
+</head>
+<body style="overflow:hidden">
+        <div id="mytown_map" class="map"></div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../common/htmlHead.ejs %>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+      <script src="/javascripts/dialog-polyfill.js"></script>
+    <style>
+        .userphoto {
+          width:  100px;
+          height: 100px;
+        }
+    </style>   
+    
+    <script>
+      var snackbarLogin = null, 
+          dialog = null;
+
+      window.onload = function () {
+        snackbarLogin = document.querySelector('#snackbarLogin');
+
+        dialog = document.querySelector('dialog');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+      }
+
+      // Password
+      function fn_showDialog(){
+        dialog.showModal();
+      }
+      function fn_changePassword(){
+        var pw1 = $("#passwd1").val().trim();
+        var pw2 = $("#passwd2").val().trim();
+
+        if (pw1==='') {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'input your new password.',timeout: 2000}); return;}
+        if (pw2==='') {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'input your conform password.',timeout: 2000}); return;}
+        if (pw1!==pw2) {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'not match new password and conform.',timeout: 2000}); return;}
+        dialog.close();
+
+        $.ajax({
+          method: "POST",
+          url: "changePW",
+          data: { userpw: pw1 }
+        })
+          .done(function( msg ) {
+            snackbarLogin.MaterialSnackbar.showSnackbar({message: 'changed Password.',timeout: 2000});        
+          });
+      }
+
+      // Photo
+      function ev_imageClick(){
+        $('#userfile').trigger('click'); 
+      }
+
+      function ev_photoChange(){
+        var formData = new FormData();
+        formData.append('userfile', $("#userfile")[0].files[0]);
+        $.ajax({
+            type: "POST",
+            url: "/users/userPhoto",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(r){
+              $("#userphoto").attr("src","/users/getPhoto?filename=" + r);
+            },
+            error: function (e) {
+                console.log("some error", e);
+            }
+        });
+      }
+
+      // Save
+      function formSubmit(){
+        var usernm = $("#usernm").val().trim();
+        if (usernm==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter your name.',timeout: 2000});        
+          return;
+        }
+        $.ajax({
+          method: "POST",
+          url: "profileSave",
+          data: { usernm: usernm }
+        })
+          .done(function( msg ) {
+            snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Saved your name.',timeout: 2000});        
+          });
+      }
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <% include ../common/header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+          <input accept="image/*" style="display: none" id="userfile"  type="file" onchange="ev_photoChange()"/>
+              <ul class="demo-list-item mdl-list">
+                <li class="mdl-list__item">
+                    <%if (row.PHOTO) { %> 
+                      <img class="userphoto" src="/users/getPhoto?filename=<%=row.PHOTO%>" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
+                    <% } else {%>
+                      <img class="userphoto" src="/images/user.jpg" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
+                    <% } %>
+                    <div class="mdl-tooltip" data-mdl-for="userphoto">Click to Change</div>
+                </li>      
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">Name</span>
+                    <input class="mdl-textfield__input" type="text" id="usernm" name="usernm" value="<%=row.USERNM%>">
+                </li>
+              </ul>
+                <div class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="history.back(-1)">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">arrow_back</i></a>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="fn_showDialog()">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Change Password</a>
+                </div>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Change Password</h4>
+        <div class="mdl-dialog__content">
+            <div class="mdl-textfield mdl-js-textfield">
+              <input class="mdl-textfield__input" type="password" id="passwd1" name="passwd1">
+              <label class="mdl-textfield__label" for="passwd1">Password</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield">
+              <input class="mdl-textfield__input" type="password" id="passwd2" name="passwd2">
+              <label class="mdl-textfield__label" for="passwd2">Confirm</label>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+          <button type="button" class="mdl-button" onclick="fn_changePassword()">Change</button>
+          <button type="button" class="mdl-button close">Close</button>
+        </div>
+    </dialog>
+
+    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
+  </div>     
+  </body>
+</html>

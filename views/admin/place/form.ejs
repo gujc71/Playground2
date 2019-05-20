@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../../common/htmlHead.ejs %>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+      <script src="/javascripts/dialog-polyfill.js"></script>      
+    <style>
+      .listTitle {
+        display: block !important;
+        min-width: 100px;
+      }
+      .m1dl-textfield__input{
+        width: auto;
+      }
+      .mdl-list__item{
+        padding: 10px 16px;
+      }
+    </style>   
+    
+    <script>
+      window.onload = function () {
+        snackbarMessage = document.querySelector('#snackbarMessage');
+
+        dialog = document.querySelector('dialog');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });
+      }
+
+      function formSubmit(){
+        var snackbarLogin = document.querySelector('#snackbarLogin');
+        if ($("#pgname").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소명을 입력하세요.',timeout: 2000});        
+          return;
+        }
+        if ($("#pgsize").val()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 면적을 입력하세요.',timeout: 2000});        
+          return;
+        }
+        $("#inputForm").submit();
+      }
+
+      function ev_deleteClick(){
+        $("#inputForm").attr("action", "delete");
+        $("#inputForm").submit();
+      }
+
+      function addr2coordinates(){
+        $.ajax({
+          type: "GET",
+          url: "https://dapi.kakao.com/v2/local/search/address.json",
+          data: {query:$("#pgaddr").val()},
+          beforeSend : function(xhr){
+            xhr.setRequestHeader("Authorization", "KakaoAK <%=appkey%>");
+          },
+          success: function(ret){
+            $("#pglat").val(ret.documents[0].x);
+            $("#pglon").val(ret.documents[0].y);
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        });  
+      }
+
+      function getMap() {
+        document.getElementById("mapFrame").contentWindow.loadMap($("#pglat").val(), $("#pglon").val());
+        dialog.showModal();
+      }
+      function ev_getPosition() {
+        var pos = document.getElementById("mapFrame").contentWindow.getPosition();
+
+        $("#pglat").val(pos.ib);
+        $("#pglon").val(pos.jb);
+
+        dialog.close();
+      }
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <% include ../header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+          <form action="save" id="inputForm" method="post" style="width: 100%;">
+            <input type="hidden" name="pgno" value="<%=row.PGNO%>"> 
+              <ul class="demo-list-item mdl-list">
+                <li class="mdl-list__item">
+                    <label>
+                        <input type="radio" id="pgtype1" name="pgtype1" value="A" <%=row.PGTYPE1==="A"?"checked":""%> >
+                        <span>실내 놀이터</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="pgtype1" name="pgtype1" value="B" <%=row.PGTYPE1==="B"?"checked":""%> >
+                        <span>실외 놀이터</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="pgtype1" name="pgtype1" value="C" <%=row.PGTYPE1==="C"?"checked":""%> >
+                        <span>박물관/미술관</span>
+                    </label>
+                    <label>
+                      <input type="radio" id="pgtype1" name="pgtype1" value="D" <%=row.PGTYPE1==="D"?"checked":""%> >
+                      <span>도서관</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="pgtype1" name="pgtype1" value="Z" <%=row.PGTYPE1==="Z"?"checked":""%> >
+                        <span>기타</span>
+                    </label>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">장소명</span>
+                    <input class="mdl-textfield__input" type="text" id="pgname" name="pgname" value="<%=row.PGNAME%>" maxlength="50"/>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">면적</span>
+                    <input class="mdl-textfield__input" type="text" id="pgsize" name="pgsize" value="<%=row.PGSIZE%>" maxlength="10"/>
+                    <span class="listTitle">장소 종류</span>
+                    <input class="mdl-textfield__input" type="text" id="pgtype2" name="pgtype2" value="<%=row.PGTYPE2%>" maxlength="10"/>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">주소</span>
+                    <input class="mdl-textfield__input" type="text" id="pgaddr" name="pgaddr" value="<%=row.PGADDR%>" maxlength="70"/>
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="addr2coordinates()" style="min-width:150px">주소를 좌표로</button>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">위도</span>
+                    <input class="mdl-textfield__input" type="text" id="pglat" name="pglat" value="<%=row.PGLAT%>" readonly/>
+                    <span class="listTitle">경도</span>
+                    <input class="mdl-textfield__input" type="text" id="pglon" name="pglon" value="<%=row.PGLON%>" readonly/>
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="getMap()"><i class="material-icons">map</i> </button>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">URL</span>
+                    <input class="mdl-textfield__input" type="text" id="pgurl" name="pgurl" value="<%=row.PGURL%>" maxlength="120"/>
+                    <span class="listTitle">전화</span>
+                    <input class="mdl-textfield__input" type="text" id="pgtel" name="pgtel" value="<%=row.PGTEL%>" maxlength="25"/>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">개요/설명</span>
+                    <textarea class="mdl-textfield__input" id="pgdesc" name="pgdesc" rows="5" cols="60"><%=row.PGDESC%></textarea>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">가격</span>
+                    <textarea class="mdl-textfield__input" id="pgprice" name="pgprice" rows="3" cols="60"><%=row.PGPRICE%></textarea>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">기타 1</span>
+                    <textarea class="mdl-textfield__input" id="pgextra1" name="pgextra1" rows="3" cols="60"><%=row.PGEXTRA1%></textarea>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">기타 2</span>
+                    <textarea class="mdl-textfield__input" id="pgextra2" name="pgextra2" rows="3" cols="60"><%=row.PGEXTRA2%></textarea>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="listTitle">기타 3</span>
+                    <textarea class="mdl-textfield__input" id="pgextra3" name="pgextra3" rows="3" cols="60"><%=row.PGEXTRA3%></textarea>
+                </li>
+              </ul>
+                <div class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="history.back(-1)">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">arrow_back</i></a>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> 저장</a>
+                    <% if (row.PGNO) {%>
+                      <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="ev_deleteClick()">
+                          <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i> 삭제</a>
+                    <% } %>
+                </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="mdl-dialog " style="width: 1000px;">
+        <h4 class="mdl-dialog__title">마커를 이동하여 좌표를 지정하세요</h4>
+        <form action="save" id="inputForm" method="post" style="width: 100%;">
+          <div class="mdl-dialog__content">
+              <iframe id="mapFrame" src="formMap" style="width: 99%; height: 500px; overflow:hidden"></iframe>
+          </div>
+        </form>
+        <div class="mdl-dialog__actions">
+          <button type="button" class="mdl-button" onclick="ev_getPosition()">좌표지정</button>
+          <button type="button" class="mdl-button close">닫기</button>
+        </div>
+    </dialog>  
+
+    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>     
+  </body>
+</html>
