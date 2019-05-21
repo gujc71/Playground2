@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var pool = require('./mysqlConn');
 
-require('dotenv').config();
+const APPKEY = require('./util').APPKEY;
 
 router.get('/', function(req, res, next) {
     res.redirect('/adplace/list');
@@ -70,14 +70,14 @@ router.get('/listMap', function(req,res,next){
             connection.release(); 
             if (err) console.error("err : " + err);
 
-            res.render('admin/place/listMap', {placelist: rows, pgtype1:pgtype1, appkey: process.env.APPKEY});
+            res.render('admin/place/listMap', {placelist: rows, pgtype1:pgtype1, appkey: APPKEY});
         });
     }); 
 });
 
 router.get('/form', function(req,res,next){
     if (!req.query.pgno) {
-        res.render('admin/place/form', {row: "", appkey: process.env.APPKEY});
+        res.render('admin/place/form', {row: "", appkey: APPKEY});
         return;
     }
     pool.getConnection(function (err, connection) {
@@ -87,14 +87,14 @@ router.get('/form', function(req,res,next){
         connection.query(sql, function (err, rows) {
             if (err) console.error("err : " + err);
 
-            res.render('admin/place/form', {row: rows[0], appkey: process.env.APPKEY});
+            res.render('admin/place/form', {row: rows[0], appkey: APPKEY});
             connection.release();
         });
     }); 
 });
 
 router.get('/formMap', function(req,res,next){
-    res.render('admin/place/formMap', {appkey: process.env.APPKEY});
+    res.render('admin/place/formMap', {appkey: APPKEY});
 });
 
 

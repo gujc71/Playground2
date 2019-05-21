@@ -3,14 +3,14 @@ var router = express.Router();
 var pool = require('./mysqlConn');
 
 const uploadPath = require('./util').uploadPath;
-require('dotenv').config();
+const APPKEY = require('./util').APPKEY;
 
 router.get('/', function(req, res, next) {
     res.redirect('/show/myTown');
 });
 
 router.get('/myTown', function(req,res,next){
-    res.render('show/myTown', {appkey: process.env.APPKEY});
+    res.render('show/myTown', {appkey: APPKEY});
 });
 
 router.get('/myTownMap', function(req,res,next){
@@ -27,7 +27,7 @@ router.get('/myTownMap', function(req,res,next){
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
-            res.render('show/myTownMap', {mapInfo: param, placelist:rows, appkey: process.env.APPKEY});
+            res.render('show/myTownMap', {mapInfo: param, placelist:rows, appkey: APPKEY});
         });
     }); 
 });
@@ -74,7 +74,7 @@ router.get('/courseDetail', function(req,res,next){
                 connection.release();
                 if (err) console.error("err : " + err);
     
-                res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: process.env.APPKEY });
+                res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: APPKEY });
             });
 
         });

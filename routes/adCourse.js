@@ -3,11 +3,12 @@ var router = express.Router();
 var pool = require('./mysqlConn');
 
 const uploadPath = require('./util').uploadPath;
+const APPKEY = require('./util').APPKEY;
 
 var multer = require('multer');
 var upload = multer({ dest: uploadPath})
 var fs = require('fs');
-require('dotenv').config();
+
 
 router.get('/', function(req, res, next) {
     res.redirect('/adcourse/list');
@@ -184,7 +185,7 @@ router.get('/courseMap', function(req,res,next){
             connection.release();
             if (err) console.error("err : " + err);
 
-            res.render('admin/course/courseMap', {placelist:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: process.env.APPKEY});
+            res.render('admin/course/courseMap', {placelist:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: APPKEY});
         });
     }); 
 });

@@ -25,7 +25,7 @@
 - npm install
 - set the information in the "/routes/mysqlConn.js" to connect to MariaDB
 - create tables by running tables.sql from MariaDB
-- set the API Key in the ".env" to connect to Daum Map 
+- set the API Key in the "/routes/util.js" to connect to Daum Map 
 - npm start
 
 ### License ###

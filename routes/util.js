@@ -1,3 +1,3 @@
-const uploadPath = 'D:\\fileupload\\';
+module.exports.uploadPath = 'D:\\fileupload\\';
 
-module.exports.uploadPath = uploadPath;
+module.exports.APPKEY="";
