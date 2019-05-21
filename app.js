@@ -36,11 +36,15 @@ app.use(session({
 var exceptList = "/users/loginForm,/users/loginChk";
 app.use(function(req, res, next) {
   let url = req.url.split('?')[0];
-  //console.log(url);
+  console.log(url);
   if (url==="/") {
     res.redirect('/show'); 
   }
-  if ((exceptList.indexOf(url)===-1 || url==="/") & !req.session.userno & url.indexOf("/show")===-1) {
+  if (url.indexOf("common/") >-1) {
+    next();
+    return;
+  }
+  if (exceptList.indexOf(url)===-1 & !req.session.userno & url.indexOf("/show")===-1) {
     res.redirect('/users/loginForm'); 
     return; 
   }

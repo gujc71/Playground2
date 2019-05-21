@@ -80,8 +80,9 @@ html, body {
 }
 
 .demo-content {
-  max-width: 1080px;
-  margin: 10px auto !important;
+  _max-width: 1080px;
+  _margin: 10px auto !important;
+  margin: 10px 10px;
 }
 
 .demo-charts {
