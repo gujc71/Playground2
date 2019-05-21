@@ -68,7 +68,7 @@ router.post('/save', upload.single('cmimage'), function(req,res,next){
                 data.push(req.file.filename);
                 let sql1 = "SELECT CMIMAGE FROM TBL_COURSEMST WHERE CMNO="+req.body.cmno;
                 connection.query(sql1, function (err, rows) {
-                    fs.unlinkSync(uploadPath + rows[0].CMIMAGE);    
+                    if (rows[0].CMIMAGE) fs.unlinkSync(uploadPath + rows[0].CMIMAGE);    
                 }); 
             }
             sql += " WHERE CMNO=?";

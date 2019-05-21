@@ -1,19 +1,19 @@
 function getMarker(place) {
     var str= '<div class="wrap">' + 
-    '    <div class="info">' + 
-    '        <div class="title">' + place.PGNAME +'</div>' + 
-    '        <div class="body">' + 
-    '            <div class="img"><img src="/images/noimage.png" width="73" height="70"></div>' + 
-    '            <div class="desc">' + 
-    '                <div class="ellipsis">' + place.PGADDR + '</div>'+
-    '                <div>';
-    if (place.PGURL) str += '<a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
-    str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank">길찾기</a>' + 
-    '                </div>' + 
-    '            </div>' + 
-    '        </div>' + 
-    '    </div>' +    
-    '</div>';    
+            '    <div class="info">' + 
+            '        <div class="title">' + place.PGNAME +'</div>' + 
+            '        <div class="body">' + 
+            '            <div class="img"><img src="/images/noimage.png" width="73" height="70"></div>' + 
+            '            <div class="desc">' + 
+            '                <div class="ellipsis">' + place.PGADDR + '</div>'+
+            '                <div>';
+            if (place.PGURL) str += '<a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
+            str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank">길찾기</a>' + 
+            '                </div>' + 
+            '            </div>' + 
+            '        </div>' + 
+            '    </div>' +    
+            '</div>';    
     return str;
 };
 

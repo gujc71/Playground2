@@ -117,9 +117,4 @@ router.post('/userPhoto', upload.single('userfile'), function(req, res){
   }); 
 });
 
-router.get('/getPhoto', function(req,res,next){
-  res.download(uploadPath+req.query.filename);
-});
-
-
 module.exports = router;

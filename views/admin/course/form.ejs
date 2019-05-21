@@ -5,6 +5,7 @@
       <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
       <script src="/javascripts/dialog-polyfill.js"></script>
       <script src="/javascripts/ckeditor.js"></script>      
+      <script src="/javascripts/translations/ko.js"></script>      
     <script>
       var cmdescEditor;
       window.onload = function () {
@@ -15,13 +16,15 @@
         dialog.querySelector('.close').addEventListener('click', function() {
           dialog.close();
         });
-        BalloonEditor.create( document.querySelector( '#cmdescEditor' ) )
-            .then( editor => {
+
+        BalloonEditor.create( document.querySelector( '#cmdescEditor' ), {
+          language: 'ko',
+          ckfinder: {uploadUrl: '/common/uploadFile4Editor'}
+        }).then( editor => {
               cmdescEditor= editor;
-            } )
-            .catch( error => {
-                console.error( error );
-            } );
+        }).catch( error => {
+              console.error( error );
+        });
       }         
       function formSubmit(){
         var snackbarLogin = document.querySelector('#snackbarLogin');

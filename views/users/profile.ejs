@@ -65,7 +65,7 @@
             processData: false,
             contentType: false,
             success: function(r){
-              $("#userphoto").attr("src","/users/getPhoto?filename=" + r);
+              $("#userphoto").attr("src","/common/getimage?filename=" + r);
             },
             error: function (e) {
                 console.log("some error", e);

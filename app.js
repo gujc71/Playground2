@@ -57,6 +57,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/index', indexRouter);
 app.use('/users', usersRouter);
+app.use('/common', require('./routes/common'));
 app.use('/board', require('./routes/board'));
 app.use('/show', require('./routes/show'));
 app.use('/adusers', require('./routes/adUsers'));

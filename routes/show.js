@@ -17,7 +17,7 @@ router.get('/myTownMap', function(req,res,next){
     let param = {ib: req.query.ib, jb: req.query.jb}
 
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGLON, PGTYPE1, PGTYPE2, " +
+        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGURL, PGLON, PGTYPE1, PGTYPE2, " +
                   "       (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
                   "  FROM TBL_PLAYGROUND" + 
                   " WHERE DELETEFLAG='N' " + 
@@ -79,10 +79,6 @@ router.get('/courseDetail', function(req,res,next){
 
         });
     }); 
-});
-
-router.get('/getimage/:filename', function(req,res,next){
-    res.download(uploadPath+req.params.filename);
 });
 
 module.exports = router;
