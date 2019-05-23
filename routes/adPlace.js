@@ -116,7 +116,7 @@ router.post('/save', function(req,res,next){
             }); 
         } else {
             let pgtype1 = req.body.pgtype1;
-            sql = `SELECT CONCAT('${pgtype1}', IFNULL(MAX(CAST(REGEXP_SUBSTR(PGNO, '[1-9]+') AS INT)),0)+1) AS PGNO FROM TBL_PLAYGROUND WHERE PGTYPE1='${pgtype1}'`;
+            sql = `SELECT CONCAT('${pgtype1}', RIGHT(CONCAT('00000000', REPLACE(MAX(PGNO), '${pgtype1}', '')+1),9)) AS PGNO FROM TBL_PLAYGROUND WHERE PGTYPE1='${pgtype1}'`;
             connection.query(sql, data, function (err, rows) {
                 if (err) console.error("err : " + err);
 

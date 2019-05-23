@@ -32,6 +32,11 @@
 
       function formSubmit(){
         var snackbarLogin = document.querySelector('#snackbarLogin');
+
+        if (!$('input[name="pgtype1"]:checked').val()) {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 대분류를 입력하세요.',timeout: 2000});        
+          return;
+        }
         if ($("#pgname").val()==="") {
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소명을 입력하세요.',timeout: 2000});        
           return;
@@ -90,7 +95,8 @@
             <input type="hidden" name="pgno" value="<%=row.PGNO%>"> 
               <ul class="demo-list-item mdl-list">
                 <li class="mdl-list__item">
-                    <label>
+                  <span class="listTitle">장소 대분류</span>
+                  <label>
                         <input type="radio" id="pgtype1" name="pgtype1" value="A" <%=row.PGTYPE1==="A"?"checked":""%> >
                         <span>실내 놀이터</span>
                     </label>
@@ -118,7 +124,7 @@
                 <li class="mdl-list__item">
                     <span class="listTitle">면적</span>
                     <input class="mdl-textfield__input" type="text" id="pgsize" name="pgsize" value="<%=row.PGSIZE%>" maxlength="10"/>
-                    <span class="listTitle">장소 종류</span>
+                    <span class="listTitle">장소 중분류</span>
                     <input class="mdl-textfield__input" type="text" id="pgtype2" name="pgtype2" value="<%=row.PGTYPE2%>" maxlength="10"/>
                 </li>
                 <li class="mdl-list__item">
