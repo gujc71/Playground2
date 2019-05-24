@@ -33,13 +33,10 @@ app.use(session({
 }));
 
 // Interceptor
-var exceptList = "/users/loginForm,/users/loginChk";
+var exceptList = "/index,/users/loginForm,/users/loginChk";
 app.use(function(req, res, next) {
   let url = req.url.split('?')[0];
   //console.log(url);
-  if (url==="/") {
-    res.redirect('/show'); 
-  }
   if (url.indexOf("common/") >-1) {
     next();
     return;

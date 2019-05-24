@@ -47,7 +47,7 @@
                               <label class="mdl-textfield__label" for="userid">ID</label>
                             </div>
                             <div class="mdl-textfield mdl-js-textfield">
-                              <input class="mdl-textfield__input" type="password" id="userpw" name="userpw">
+                              <input class="mdl-textfield__input" type="password" id="userpw" name="userpw" onKeyDown="if(event.keyCode == 13) formSubmit()">
                               <label class="mdl-textfield__label" for="userpw">Password</label>
                             </div>
                         </form>                        

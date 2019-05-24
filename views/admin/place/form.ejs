@@ -37,12 +37,16 @@
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 대분류를 입력하세요.',timeout: 2000});        
           return;
         }
-        if ($("#pgname").val()==="") {
+        if (!$("#pgname").val()) {
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소명을 입력하세요.',timeout: 2000});        
           return;
         }
-        if ($("#pgsize").val()==="") {
+        if (!$("#pgsize").val()) {
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 면적을 입력하세요.',timeout: 2000});        
+          return;
+        }
+        if (!$("#pglat").val() || !$("#pglon").val()) {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '위도 / 경도를 입력하세요.',timeout: 2000});        
           return;
         }
         $("#inputForm").submit();

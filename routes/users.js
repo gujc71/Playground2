@@ -8,7 +8,7 @@ var multer = require('multer');
 var upload = multer({ dest: uploadPath})
 
 router.get('/', function(req, res, next) {
-  res.redirect('users/loginForm');
+  res.redirect('loginForm');
 });
 
 router.get('/loginForm', function(req, res, next) {

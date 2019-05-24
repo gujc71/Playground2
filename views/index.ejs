@@ -8,9 +8,83 @@
         <% include ./common/header_menu.ejs %>
 
       <main class="mdl-layout__content mdl-color--grey-100">
-        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
-            Contents
-        </div>
+            <div class="mdl-grid mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-card mdl-shadow--4dp">
+                <div class="mdl-card__media1 mdl-cell mdl-cell--12-col-tablet ">
+                    <img class="article-image" src=" images/main.jpg" alt="" style="width:100%">
+                </div>
+                <div class="mdl-cell mdl-cell--8-col">
+                    <h2 class="mdl-card__title-text">우리동네, 아이랑 놀곳 Ver.서울</h2>
+                    <div class="mdl-card__supporting-text padding-top">
+                        <h6 style="padding-left: 100px">Playground</h6>
+                    </div>
+                    <div class="mdl-card__supporting-text no-left-padding">
+                        <p>Playground는 서울 시내에서 아이랑 갈만한 실내외 놀이터, 박물관/미술관, 도서관등의 장소(약 3,400군데)들을 모아서, 일목요연하게 보여 주는 웹 사이트로 2가지 기능을 제공하고 있습니다.</p>
+                        <p><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation" style="vertical-align: middle;">home</i><a href="/show/myTown">우리 동네</a>: 지도상에 보고싶은 지역의 좌표(위도, 경도)를 지정하면, 좌표를 중심으로 2Km 내의 시설/장소 정보 표시</p>
+                        <p><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation" style="vertical-align: middle;">explore</i><a href="/show/courseList">추천 코스</a>: 특정 장소를 중심으로 갈만한 장소들을 묶어서 하나의 코스로 정리</p>
+                    </div>
+                </div>
+                <div class="mdl-cell--12-col mdl-grid portfolio-max-width">
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">실내 놀이터</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <p>- 보유 데이터 건수: 약 270건</p>
+                            <p>- 자료원: <a href="http://www.localdata.kr/" target="_blank">행정안전부 지역별 데이터</a></p>
+                            실내 놀이터 같은 키즈카페외에도 타요, 콩순이, 뽀로로 같은 주제를 가진 키즈카페, 조그만 놀이 동산같은 키즈카페등 다양한 실내 놀이시설이 있습니다.
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">실외 놀이터</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <p>- 보유 데이터 건수: 약 1,500건</p>
+                            <p>- 자료원: <a href="http://www.cpf.go.kr/front/sub01/sub0101.do" target="_blank">행정안전부 어린이 놀이시설 현황</a>(일반놀이터),
+                                <a href="https://map.seoul.go.kr" target="_blank">스마트 서울맵자료</a> (창의 놀이터)
+                            </p>
+                            동네에서 흔히 보는 놀이터 외에도 근린 공원 등에 제법 큰놀이터도 많습니다.
+노후 시설 개선과 보다 나은 놀이터를 만들기 위해 서울시 주관으로 창의 놀이터가(90건) 개설되고 있고, 각 구별로도 놀이터를 개선하면서 다양한 놀이터가 늘고 있습니다.
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">박물관(과학관)/미술관</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <p>- 보유 데이터 건수: 약 290건</p>
+                            <p>- 자료원: <a href="https://www.data.go.kr/dataset/15017323/standard.do" target="_blank">공공데이터</a> </p>
+                            박물관/과학관은 교육적 효과가 높은 실내 놀이터로 아이와 같이 가기 좋은 곳이었지만, 단순하고 체험시설이 부족한 단점이 있습니다.
+                        최근들어 좋아 지고 있지만, 아직은 갈길이 멀어보입니다. 그래도 다른 시설과 같이 다니면 즐거운 하루를 보내는 데 좋습니다.<br/>
+미술관은 아는게...
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">도서관</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <p>- 보유 데이터 건수: 약 1,360건</p>
+                            <p>- 자료원: <a href="https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-15480&srvType=S&serviceKind=1&currentPageNo=1" target="_blank">공공데이터</a> </p>
+                                도서관은 복합 문화 센터로 책도 있지만 무료 영화 상영, 교육 등을 진행하는 제법 괜찮은 무료 시설이지만, 자료를 접하기 어려운 단점이 있습니다.(홍보를 숨기는 듯함)<br/>
+                                기본적으로 큰아이들은 책을 안좋아해도 만화책이 있고, 작은 아이(영유아)들은 부모가 읽어주며 놀 수 있음.</a>
+                                보다 상세한 내용은 <a href="https://brunch.co.kr/@sjenny00/68" target="_blank">[어린이 도서관 완전정복하기]</a> 참고하세요.
+                                </p>                      
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                            <div class="mdl-card__title">
+                                <h2 class="mdl-card__title-text"></h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <p>위치 정보에 오류가 있습니다.</p>
+                                <p>발견하는데로 수정중에 있지만, 데이터 양이 많아서 시간이 많이 걸립니다.</p>                      
+                                <p>오류 신고 기능은 회원 관련 기능과 같이 공개될 예정입니다.</p>                      
+                            </div>
+                        </div>
+            
+                </div>
+            </div>
       </main>
     </div>
   </body>

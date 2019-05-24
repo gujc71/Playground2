@@ -2,9 +2,15 @@
 <html lang="ko">
 <head>
     <% include ../common/htmlHead.ejs %>
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>&libraries=services"></script>      
     <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
+    <script src="/javascripts/dialog-polyfill.js"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+
     <script>
+      var dialog = null; 
+      var map, marker = null;
+
       window.onload = function () {
         const mapContainer = document.getElementById('mytown_map');
         const sPosition = new daum.maps.LatLng(37.57590409118165, 126.97684292625047)
@@ -13,18 +19,23 @@
             level: 3
         }; 
 
-        let map = new daum.maps.Map(mapContainer, mapOption);
+        map = new daum.maps.Map(mapContainer, mapOption);
         displayMarker(map, sPosition);
 
         if (navigator.geolocation) {
-          let _this = this;
           navigator.geolocation.getCurrentPosition(function(position) {
-            let locPosition = new daum.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            this.displayMarker(map, locPosition);
+            var locPosition = new daum.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            displayMarker(map, locPosition);
           });
-        } 
+        }
+        dialog = document.querySelector('dialog');
+        if (! dialog.showModal) {
+          dialogPolyfill.registerDialog(dialog);
+        }
+        dialog.querySelector('.close').addEventListener('click', function() {
+          dialog.close();
+        });  
       }
-      marker = null;
 
       function displayMarker (map, locPosition) {
         if (!marker) {
@@ -44,6 +55,47 @@
         let pos = marker.getPosition();
         location.href = "myTownMap?ib=" + pos.ib + "&jb=" + pos.jb
       }
+
+      function ev_showDialog(){
+        dialog.showModal();
+      }
+
+      var ps;
+      function ev_searchAddr(){
+        if (!ps) ps = new daum.maps.services.Places();  
+        var addr = $("#pgaddr").val();
+        if (!addr.replace(/^\s+|\s+$/g, '')) {
+          alert('주소를 입력해주세요!');
+          return false;
+        }
+
+        ps.keywordSearch( addr, placesSearchCB); 
+      }
+
+      function placesSearchCB(data, status, pagination) {
+        if (status === daum.maps.services.Status.ZERO_RESULT) {
+            alert('검색 결과가 존재하지 않습니다.');
+            return;
+        } else if (status === daum.maps.services.Status.ERROR) {
+            alert('검색 결과 중 오류가 발생했습니다.');
+            return;
+        }        
+        var ul = $("#searchlist");
+        ul.empty();
+        data.forEach(function(place) {
+          var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
+          var html='<span class="mdl-list__item-primary-content">' + 
+                    '   <span>' + place.place_name + '</span>' + 
+                    '   <span class="mdl-list__item-sub-title">' + place.address_name + '</span>' + 
+                    '</span>';
+          li.html(html);
+          li.click(function() {
+            displayMarker(map, new daum.maps.LatLng(place.y, place.x));
+            dialog.close();
+          });            
+          ul.append(li);
+        }); 
+      }
     </script>
 </head>
 <body>
@@ -57,9 +109,25 @@
           <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="handleNext()">2km 내에서 검색</button>
         </div>
 
+        <div style="position: absolute; top:100px">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" 
+                style="width: 30px;height:147px;line-height:20px;z-index: 99;min-width: 0;padding: 3px;" onclick="ev_showDialog()">주소로 위치 검색</button>
+        </div>
         <div id="mytown_map" class="map"></div>
       </div>
     </main>
   </div>
+
+  <dialog class="mdl-dialog">
+      <h4 class="mdl-dialog__title" id="pgname">주소를 입력하세요</h4>
+      <div class="mdl-dialog__content" style="min-height: 70px; padding-bottom:0px">
+          <input class="mdl-textfield__input" type="text" id="pgaddr" name="pgaddr" onKeyDown="if(event.keyCode == 13) ev_searchAddr()"/>
+          <ul class="demo-list-two mdl-list" id="searchlist" style="max-height: 126px;overflow: auto;"></ul>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button close">닫기</button>
+        <button type="button" class="mdl-button" onclick="ev_searchAddr()">찾기</button>
+      </div>
+  </dialog>  
 </body>
 </html>

@@ -107,7 +107,7 @@ router.post('/save', function(req,res,next){
         if (req.body.pgno) {
             data.push(req.body.pgno);
             sql = "UPDATE TBL_PLAYGROUND" +
-                    " SET PGNAME=?, PGLAT=?, PGLON=?, PGURL=?, PGTEL=?, PGADDR=?, PGTYPE1=?, PGTYPE2=?, PGSIZE=?, PGPRICE=?, PGDESC=?, PGEXTRA1=?, PGEXTRA2=?, PGEXTRA3=?" +
+                    " SET PGNAME=?, PGLAT=?, PGLON=?, PGURL=?, PGTEL=?, PGADDR=?, PGTYPE1=?, PGTYPE2=?, PGSIZE=?, PGPRICE=?, PGDESC=?, PGEXTRA1=?, PGEXTRA2=?, PGEXTRA3=?, UPDATEDATE=now()" +
                   " WHERE DELETEFLAG='N' AND PGNO=?";
             connection.query(sql, data, function (err, rows) {
                 connection.release();
@@ -117,12 +117,13 @@ router.post('/save', function(req,res,next){
         } else {
             let pgtype1 = req.body.pgtype1;
             sql = `SELECT CONCAT('${pgtype1}', RIGHT(CONCAT('00000000', REPLACE(MAX(PGNO), '${pgtype1}', '')+1),9)) AS PGNO FROM TBL_PLAYGROUND WHERE PGTYPE1='${pgtype1}'`;
+            
             connection.query(sql, data, function (err, rows) {
                 if (err) console.error("err : " + err);
 
                 data.push(rows[0].PGNO);
-                sql = "INSERT INTO TBL_PLAYGROUND(PGNAME, PGLAT, PGLON, PGURL, PGTEL, PGADDR, PGTYPE1, PGTYPE2, PGSIZE, PGPRICE, PGDESC, PGEXTRA1, PGEXTRA2, PGEXTRA3, PGNO, DELETEFLAG) " +
-                      " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'N')";
+                sql = "INSERT INTO TBL_PLAYGROUND(PGNAME, PGLAT, PGLON, PGURL, PGTEL, PGADDR, PGTYPE1, PGTYPE2, PGSIZE, PGPRICE, PGDESC, PGEXTRA1, PGEXTRA2, PGEXTRA3, PGNO, UPDATEDATE, DELETEFLAG) " +
+                      " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, now(), 'N')";
                       
                 connection.query(sql, data, function (err, rows) {
                     connection.release();

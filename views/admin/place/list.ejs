@@ -59,7 +59,7 @@
             </select>         
         </div>
         <div class="mdl-textfield1" style="margin: 0 10px">
-            <input class="mdl-textfield__input" type="text" id="keyword" value='<%=keyword%>'/>
+            <input class="mdl-textfield__input" type="text" id="keyword" value='<%=keyword%>' onKeyDown="if(event.keyCode == 13) ev_searchClick()"/>
         </div>      
         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="ev_searchClick()" ><i class="material-icons">search</i> 검색</button>
 

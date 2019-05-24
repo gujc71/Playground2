@@ -69,8 +69,9 @@ router.get('/courseDetail', function(req,res,next){
                   "  FROM TBL_COURSEDTL TCD" + 
                   " INNER JOIN TBL_PLAYGROUND TPG ON TPG.PGNO=TCD.PGNO" + 
                   " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
-                  " WHERE CLASSNO='E' AND TCD.CMNO="+req.query.cmno +
+                  " WHERE CLASSNO='e' AND TCD.CMNO="+req.query.cmno +
                   " ORDER BY CDORDER";
+                  console.log(sql);
             connection.query(sql, function (err, rows) {
                 connection.release();
                 if (err) console.error("err : " + err);
