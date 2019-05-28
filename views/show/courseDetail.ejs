@@ -11,11 +11,6 @@
         .mdl-list__item > span {
             width: 100px;
         }
-        .placeAvarta {
-          float: none;
-          display:block;
-          margin: auto;
-        }
         .mdl-list-courseitem {
           float:left;
         }
@@ -34,6 +29,10 @@
         }        
         .mdl-tooltip--large > .wrap{
           border: 1px solid;
+        }
+
+        .cmdesc img {
+          max-width: 98%;
         }
     </style>   
     
@@ -57,9 +56,12 @@
           $("#" + place.PGNO).click(function() {
             $("#pgname").html(place.PGNAME);
             $("#pgaddr").html(place.PGADDR);
+            $("#placeAvarta3dialog").html("<i class='material-icons mdl-list__item-avatar noRound'>" + place.PLACEICON +"</i>");
+            
             var str = "";
-            if (place.PGURL) str += '<a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
-            str += '<a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank">길찾기</a>'; 
+            if (place.PGTYPE2NM) str = place.PGTYPE2NM;
+            if (place.PGURL) str += ' <a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a> ';
+            str += '<a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank" class="link">길찾기</a>'; 
             $("#pgetc").html(str);
             
             dialog.showModal();
@@ -109,7 +111,7 @@
                   %>                
                       <li class="mdl-list-courseitem mdl-cell--2-col" id="<%=row.PGNO%>">
                         <div class="placeAvarta">
-                          <i class="material-icons mdl-list__item-avatar noRound"><%=row.CODENM%></i>
+                          <i class="material-icons mdl-list__item-avatar noRound"><%=row.PLACEICON%></i>
                         </div>
                         <span class="mdl-list-courseitem-text" title="<%=row.PGNAME%>"><%=row.PGNAME%></span>
                       </li>
@@ -119,7 +121,7 @@
               </ul>                
         </div>
 
-        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp cmdesc">
             <span><%-mstInfo.CMDESC%></span>
         </div>  
         
@@ -132,8 +134,10 @@
     <dialog class="mdl-dialog">
       <h4 class="mdl-dialog__title" id="pgname">이름</h4>
       <div class="mdl-dialog__content" style="min-height: 70px;">
-              <div class="mdl-cell--4-col" style="float:left"><img src="/images/noimage.png" width="73" height="70" style="border: 1px solid"></div>
-              <div class="mdl-cell--8-col" style="float:left">
+              <div style="float:left">
+                <div class="placeAvarta" id="placeAvarta3dialog"></div>
+              </div>
+              <div style="float:left; padding-left: 10px; width: 250px">
                 <div id="pgaddr">주소</div>
                 <div id="pgetc" class="info">etc</div>
               </div>

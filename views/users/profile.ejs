@@ -75,15 +75,18 @@
 
       // Save
       function formSubmit(){
-        var usernm = $("#usernm").val().trim();
-        if (usernm==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter your name.',timeout: 2000});        
+        if ($("#usernm").val().trim()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
+          return;
+        }
+        if ($("#usermail").val().trim()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
           return;
         }
         $.ajax({
           method: "POST",
           url: "profileSave",
-          data: { usernm: usernm }
+          data: { usernm: $("#usernm").val().trim(), usermail: $("#usermail").val().trim() }
         })
           .done(function( msg ) {
             snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Saved your name.',timeout: 2000});        
@@ -108,13 +111,15 @@
                     <div class="mdl-tooltip" data-mdl-for="userphoto">Click to Change</div>
                 </li>      
                 <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content width100">Name</span>
+                    <span class="mdl-list__item-primary-content width100">이름</span>
                     <input class="mdl-textfield__input" type="text" id="usernm" name="usernm" value="<%=row.USERNM%>">
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">이메일</span>
+                    <input class="mdl-textfield__input" type="text" id="usermail" name="usermail" value="<%=row.USERMAIL%>">
                 </li>
               </ul>
                 <div class="mdl-card__actions mdl-card--border">
-                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="history.back(-1)">
-                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">arrow_back</i></a>
                     <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
                         <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
                     <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="fn_showDialog()">

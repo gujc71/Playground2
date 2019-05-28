@@ -62,9 +62,11 @@ router.get('/listMap', function(req,res,next){
     if (!pgtype1) pgtype1='A';
 
     pool.getConnection(function (err, connection) {
-        let sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGLON, PGTYPE1, PGTYPE2, PGURL" + 
+        let sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGLON, PGTYPE1, PGTYPE2, PGURL, PGTYPE2, CC.CODENM PLACEICON" + 
+                  " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
                   "  FROM TBL_PLAYGROUND TPG " +
-                  " WHERE DELETEFLAG='N' AND PGTYPE1='" + pgtype1 + "' "+
+                  " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+                  " WHERE CLASSNO='e' AND DELETEFLAG='N' AND PGTYPE1='" + pgtype1 + "' "+
                   " ORDER BY PGNAME" ;
         connection.query(sql, function (err, rows) {
             connection.release(); 

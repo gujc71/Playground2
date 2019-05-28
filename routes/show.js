@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var pool = require('./mysqlConn');
 
-const uploadPath = require('./util').uploadPath;
 const APPKEY = require('./util').APPKEY;
 
 router.get('/', function(req, res, next) {
@@ -17,13 +16,14 @@ router.get('/myTownMap', function(req,res,next){
     let param = {ib: req.query.ib, jb: req.query.jb}
 
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGURL, PGLON, PGTYPE1, PGTYPE2, " +
-                  "       (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
-                  "  FROM TBL_PLAYGROUND" + 
-                  " WHERE DELETEFLAG='N' " + 
+        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGURL, PGLON, PGTYPE1, PGTYPE2, CC.CODENM PLACEICON " +
+                  " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
+                  "     , (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
+                  "  FROM TBL_PLAYGROUND TPG" + 
+                  " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+                  " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
                   "HAVING DISTANCE <= 2" + 
                   " ORDER BY PGNAME";
-        
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
@@ -65,20 +65,24 @@ router.get('/courseDetail', function(req,res,next){
                 return;
             }
 
-            sql = "SELECT TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, CC.CODENM, PGLAT, PGLON, PGURL" + 
+            sql = "SELECT TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, PGTYPE2, CC.CODENM PLACEICON, PGLAT, PGLON, PGURL" + 
+                  " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
                   "  FROM TBL_COURSEDTL TCD" + 
                   " INNER JOIN TBL_PLAYGROUND TPG ON TPG.PGNO=TCD.PGNO" + 
                   " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
                   " WHERE CLASSNO='e' AND TCD.CMNO="+req.query.cmno +
                   " ORDER BY CDORDER";
-                  console.log(sql);
-            connection.query(sql, function (err, rows) {
-                connection.release();
+            connection.query(sql, function (err, dtlList) {
                 if (err) console.error("err : " + err);
-    
-                res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: APPKEY });
-            });
 
+                sql = "UPDATE TBL_COURSEMST SET CMREAD=CMREAD+1 WHERE CMNO="+req.query.cmno
+                connection.query(sql, function (err, rows) {
+                    connection.release();
+                    if (err) console.error("err : " + err);
+        
+                    res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:dtlList, mapInfo: {ib: dtlList[0].PGLAT, jb: dtlList[0].PGLON}, appkey: APPKEY });
+                });            
+            });
         });
     }); 
 });

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
   <head>
-    <% include ./common/htmlHead.ejs %>
+    <% include ../common/htmlHead.ejs %>
     <style>
       .demo-card-wide .mdl-card {
         width: 512px;
@@ -15,6 +15,9 @@
       }
     </style>
     <script>
+      window.onload = function () {
+        $("#userid").focus();
+      }
       function formSubmit(){
         var snackbarLogin = document.querySelector('#snackbarLogin');
         if ($("#userid").val()==="") {
@@ -53,7 +56,12 @@
                         </form>                        
                       </div>
                       <div class="mdl-card__actions mdl-card--border">
-                        <button class="mdl-button mdl-js-button" onclick="formSubmit()">Login</button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="formSubmit()">로그인</button>
+                        <a class="mdl-button  mdl-js-button mdl-js-ripple-effect" style="float: right;" href="/users/joinForm"> 회원가입</a>
+                      </div>
+                      <div class="mdl-card__actions">
+                          <a class="mdl-button mdl-js-ripple-effect" href="/auth/google">  Google로 로그인</a>
+                          <a class="mdl-button mdl-js-ripple-effect" href="/auth/facebook"> Facebook으로 로그인</a>
                       </div>
                     </div>
                 </div>                 

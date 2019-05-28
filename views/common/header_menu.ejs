@@ -5,7 +5,10 @@
       </header>
       <div class="demo-drawer mdl-layout__drawer">
         <header class="demo-drawer-header">
-          <% if (userno !== null & userno !== undefined) { %> 
+            <div class="demo-avatar-dropdown1">
+                <a href="/index"><img src="/images/logo.png" style="margin-left: 40px;"/></a>
+              </div>
+            <% if (userno) { %> 
             <i class="material-icons mdl-list__item-avatar">person</i>
             <div class="demo-avatar-dropdown">
               <span><%=usernm%></span>
@@ -18,10 +21,6 @@
                 <li class="mdl-menu__item"><a class="mdl-navigation__link" href="/users/profile">Profile</a></li>
                 <li class="mdl-menu__item"><a class="mdl-navigation__link" href="/users/Logout">Logout</a></li>
               </ul>
-            </div>
-          <% } else { %> 
-            <div class="demo-avatar-dropdown">
-              <a href="/index"><img src="/images/logo.png" style="margin-left: 40px;"/></a>
             </div>
           <% } %> 
         </header>

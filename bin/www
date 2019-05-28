@@ -7,19 +7,27 @@
 var app = require('../app');
 var debug = require('debug')('playground2:server');
 var http = require('http');
+//var https = require('https');
 
 /**
  * Get port from environment and store in Express.
  */
+/*var fs = require('fs');
+const options = {
+	key: fs.readFileSync('private.pem'),
+  cert: fs.readFileSync('public.pem')
+};*/
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+
 
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
+//https.createServer(options, app).listen(443);;
 
 /**
  * Listen on provided port, on all network interfaces.

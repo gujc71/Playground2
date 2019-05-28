@@ -41,13 +41,12 @@ router.get('/form', function(req,res,next){
         connection.query(sql, function (err, mstInfo) {
             if (err) console.error("err : " + err);
 
-            sql = "SELECT TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, CC.CODENM" + 
+            sql = "SELECT TCD.CDNO, TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, PGTYPE2, CDORDER, CC.CODENM PLACEICON" + 
                   "  FROM TBL_COURSEDTL TCD" + 
                   " INNER JOIN TBL_PLAYGROUND TPG ON TPG.PGNO=TCD.PGNO" + 
                   " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
                   " WHERE CLASSNO='E' AND TCD.CMNO="+req.query.cmno +
                   " ORDER BY CDORDER";
-
             connection.query(sql, function (err, rows) {
                 connection.release();
                 if (err) console.error("err : " + err);
@@ -86,7 +85,7 @@ router.post('/save', upload.single('cmimage'), function(req,res,next){
             let sql = "SELECT IFNULL(MAX(CMNO),0) + 1 CMNO FROM TBL_COURSEMST";
             connection.query(sql, function (err, rows) {
                 let data = [req.body.cmtitle, req.body.cmdesc, rows[0].CMNO, req.file.filename];
-                sql = "INSERT INTO TBL_COURSEMST(CMTITLE, CMDESC, CMNO, CMIMAGE, CMSHOW, UPDATEDATE, DELETEFLAG) VALUES(?,?,?,?, 'N', NOW(), 'N')";
+                sql = "INSERT INTO TBL_COURSEMST(CMTITLE, CMDESC, CMNO, CMIMAGE, CMSHOW, CMREAD, UPDATEDATE, DELETEFLAG) VALUES(?,?,?,?, 'N', 0, NOW(), 'N')";
                 connection.query(sql, data, function (err, rows) {
                     connection.release();
                     if (err) console.error("err : " + err);
@@ -147,10 +146,10 @@ router.get('/getList', function(req,res,next){
 });
 
 router.post('/courseItemSave', function(req,res,next){
-    let data = [req.body.cmno, req.body.pgno];
+    let data = [req.body.cmno, req.body.pgno, req.body.cmno];
 
     pool.getConnection(function (err, connection) {
-        let sql = "INSERT INTO TBL_COURSEDTL(CMNO, PGNO) VALUES(?,?)";
+        let sql = "INSERT INTO TBL_COURSEDTL(CMNO, PGNO, CDORDER) SELECT ?, ?, IFNULL(MAX(CDORDER),0)+1 FROM TBL_COURSEDTL WHERE CMNO=?";
         connection.query(sql, data, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
@@ -173,21 +172,46 @@ router.post('/courseItemDelete', function(req,res,next){
     }); 
 });
 
-
 router.get('/courseMap', function(req,res,next){ 
     let keyword = req.query.keyword;
 
     pool.getConnection(function (err, connection) {
-        sql = "SELECT TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, PGLAT, PGLON, PGURL" + 
+        sql = "SELECT TCD.CMNO, TPG.PGNO, TPG.PGNAME, TPG.PGADDR, PGTYPE1, PGLAT, PGLON, PGURL, CC.CODENM PLACEICON " + 
+              " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
               "  FROM TBL_COURSEDTL TCD" + 
               " INNER JOIN TBL_PLAYGROUND TPG ON TPG.PGNO=TCD.PGNO" + 
-              " WHERE TCD.CMNO="+req.query.cmno;
+              " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+              " WHERE CLASSNO='e' AND TPG.DELETEFLAG='N' AND TCD.CMNO="+req.query.cmno;
         
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
 
             res.render('admin/course/courseMap', {placelist:rows, mapInfo: {ib: rows[0].PGLAT, jb: rows[0].PGLON}, appkey: APPKEY});
+        });
+    }); 
+});
+
+router.post('/courseItemReorder', function(req,res,next){ 
+    pool.getConnection(function (err, connection) {
+        let cmno = req.body.cmno;
+        let neworder = req.body.neworder;
+        let oldorder = req.body.oldorder;
+        let sql = "";
+        if (oldorder > neworder)
+             sql = "UPDATE TBL_COURSEDTL SET CDORDER=CDORDER+1 WHERE CMNO=" + cmno + " AND CDORDER>=" + neworder + " AND CDORDER<" + oldorder;
+        else sql = "UPDATE TBL_COURSEDTL SET CDORDER=CDORDER-1 WHERE CMNO=" + cmno + " AND CDORDER>=" + oldorder + " AND CDORDER<=" + neworder;
+
+        connection.query(sql, function (err, rows) {
+            if (err) console.error("err : " + err);
+
+            sql = "UPDATE TBL_COURSEDTL SET CDORDER=" + neworder + " WHERE CDNO=" + req.body.cdno;
+            connection.query(sql, function (err, rows) {
+                connection.release();
+                if (err) console.error("err : " + err);
+    
+                res.send('OK');
+            });
         });
     }); 
 });

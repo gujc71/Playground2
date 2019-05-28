@@ -49,7 +49,6 @@ html, body {
   flex-direction: column;
   justify-content: flex-end;
   padding: 16px;
-  height: 151px;
 }
 .demo-avatar-dropdown {
   display: flex;
@@ -179,11 +178,13 @@ _:-ms-input-placeholder, :root .demo-graph {
 .noRound{
   border-radius:0px !important;
   font-size: 32px !important;
-  margin-top: 7px !important;
-  margin-left: 4px !important;
+  margin-top: 3px !important;
+  margin-left: 5px !important;
 }
+
 .placeAvarta {
-  float: left;
+  display:block;
+  margin: auto !important;
   border-radius: 50%;
   _border: 1px solid;
   width: 40px;

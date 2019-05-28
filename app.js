@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 //var logger = require('morgan');
 var session = require('express-session');
+const passport = require('passport');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,6 +27,10 @@ const helmet = require('helmet');
 app.use(helmet());
 app.disable('x-powered-by');
 
+require('./passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session()); //로그인 세션 유지
+
 app.use(session({
 	secret: '123456789',
 	resave: false,
@@ -33,11 +38,11 @@ app.use(session({
 }));
 
 // Interceptor
-var exceptList = "/index,/users/loginForm,/users/loginChk";
+var exceptList = "/index,/users/loginForm,/users/loginChk,/users/joinForm,/users/joinFormSave";
 app.use(function(req, res, next) {
   let url = req.url.split('?')[0];
-  //console.log(url);
-  if (url.indexOf("common/") >-1) {
+  console.log(url);
+  if (url.indexOf("common/") >-1 || url.indexOf("/auth") >-1) {
     next();
     return;
   }
@@ -58,6 +63,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/index', indexRouter);
 app.use('/users', usersRouter);
+app.use('/auth', require('./routes/auth'));
 app.use('/common', require('./routes/common'));
 app.use('/board', require('./routes/board'));
 app.use('/show', require('./routes/show'));
@@ -81,5 +87,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

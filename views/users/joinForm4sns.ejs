@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+      <% include ../common/htmlHead.ejs %>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+      <script src="/javascripts/dialog-polyfill.js"></script>
+    <style>
+        .userphoto {
+          width:  100px;
+          height: 100px;
+        }
+    </style>   
+    
+    <script>
+      var snackbarLogin = null;
+
+      window.onload = function () {
+        snackbarLogin = document.querySelector('#snackbarLogin');
+      }
+
+      // Save
+      function formSubmit(){
+        if ($("#usernm").val().trim()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
+          return;
+        }
+        if ($("#usermail").val().trim()==="") {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
+          return;
+        }
+        if (!confirm("회원가입을 하시겠습니까?")) {
+          return;
+        }        
+        $("#inputForm").submit();        
+      }
+    </script>   
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <% include ../common/header_menu.ejs %>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <form action="/users/joinFormSave" id="inputForm" method="post">
+              <input type="hidden" id="userid" name="userid" value="<%=user.id%>">
+              <input type="hidden" id="usersns" name="usersns" value="<%=user.sns%>">
+              <ul class="demo-list-item mdl-list">
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content width100">이름</span>
+                    <input class="mdl-textfield__input" type="text" id="usernm" name="usernm" value="<%=user.name%>">
+                </li>
+                <li class="mdl-list__item">
+                  <span class="mdl-list__item-primary-content width100">이메일</span>
+                  <input class="mdl-textfield__input" type="text" id="usermail" name="usermail" value="<%=user.email%>">
+                </li>
+              </ul>
+            </form>  
+            <div class="mdl-card__actions mdl-card--border">
+                <a class="mdl-button mdl-button--raised mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="formSubmit()"> 회원가입</a>
+            </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
+  </div>     
+  </body>
+</html>

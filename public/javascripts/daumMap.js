@@ -3,12 +3,14 @@ function getMarker(place) {
             '    <div class="info">' + 
             '        <div class="title">' + place.PGNAME +'</div>' + 
             '        <div class="body">' + 
-            '            <div class="img"><img src="/images/noimage.png" width="73" height="70"></div>' + 
+//            '            <div class="img"><img src="/images/noimage.png" width="73" height="70"></div>' + 
+            '            <div class="img"><div class="placeAvarta" style="margin-top:15px !important"><i class="material-icons mdl-list__item-avatar noRound">' + place.PLACEICON + '</i></div></div>' +
             '            <div class="desc">' + 
             '                <div class="ellipsis">' + place.PGADDR + '</div>'+
             '                <div>';
-            if (place.PGURL) str += '<a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
-            str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank">길찾기</a>' + 
+            if (place.PGTYPE2NM) str += place.PGTYPE2NM;
+            if (place.PGURL) str += ' <a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
+            str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank" class="link">길찾기</a>' + 
             '                </div>' + 
             '            </div>' + 
             '        </div>' + 
