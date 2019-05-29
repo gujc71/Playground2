@@ -90,7 +90,11 @@
           }
         
       }
-
+      function ev_showOthers() {
+        if (markerInfo.markerList.length===0) return;
+        var pos = markerInfo.markerList[0].getPosition();
+        location.href = "/show/myTownMap?ib=" + pos.ib + "&jb=" + pos.jb
+      }
       function ev_toTop() {
         $('main').animate({ scrollTop: 0 }, 'slow');
       } 
@@ -128,6 +132,12 @@
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
           <div id="mytown_map" class="map" style="width: 100%; height: 500px;"></div>      
         </div>
+
+        <div style="z-index:99; position:relative; left:20px; top: -300px">
+          <a class="mdl-button mdl-js-button mdl-button--fab " style="width:30px;height: 30px;min-width:30px;" onclick="ev_showOthers()" title="2Km내의 다른 장소보기">
+            <i class="material-icons" style="color:red">map</i>
+          </a>
+        </div>
       </main>
     </div>
 
@@ -145,7 +155,7 @@
       <div class="mdl-dialog__actions">
         <button type="button" class="mdl-button close">Close</button>
       </div>
-  </dialog>  
+    </dialog>  
 
     <div id="toTop" style="bottom: 30px;position: absolute;right: 30px; z-index:99; display:none;">
       <a class="mdl-button mdl-js-button mdl-button--fab " style="width:30px;height: 30px;min-width:30px;" onclick="ev_toTop()">
