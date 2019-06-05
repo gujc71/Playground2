@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <% include ../common/htmlHead.ejs %>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
+    <script src="/javascripts/daumMap.js"></script>   
+    <script src="/javascripts/datepicker.min.js"></script>
+    <script src="/javascripts/datepicker.en.js"></script>
+    <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
+    <link rel="stylesheet" href="/stylesheets/datepicker.min.css" media="all" />
+  
+    <script>
+      var markerInfo = null;
+
+      window.onload = function () {
+        var placelist = <%-JSON.stringify(placelist).replace(/null/gi, '""')%>;
+        var centerPos = {ib:126.97181045851413, jb:37.55630092804091};
+        var positions = [];
+
+        placelist.forEach(function(place) {
+          var content = getMarker4Event(place);
+          var posInfo =  {
+            content: content, 
+            latlng: new daum.maps.LatLng(place.SELON, place.SELAT),
+            place: place
+          };
+          positions.push(posInfo);
+        });
+        
+
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions, 8);
+
+        var datepicker = $('#eventDate').datepicker({
+							autoClose: true,
+				}).data('datepicker');
+				datepicker.selectDate(new Date("<%=eventDate%>"));       
+      }
+
+    </script>
+</head>
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <% include ../common/header_menu.ejs %>
+
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+        <div style="padding: 10px" class="mdl-card__supporting-text">
+          서울시에서 2019년 4월부터 11월까지 진행하는 <a href="https://seoulbusking.com" target="_blank">거리공연 정보를</a> 이용하여 표시한 것입니다.<br/>
+          행사장소(마커)를 클릭하면 상세 정보를 확인할 수 있고,<br/>
+          [주변검색] 기능으로 행사장소 주변의 놀이터, 박물관 등의 아이와 놀만한 장소를 확인할 수 있습니다.
+            <form id="inputForm" method="GET">
+              행사일자<input class="datepicker-here" id="eventDate" name="eventDate" data-language='en' style="width:100px; margin-left:10px" readonly/>
+            <button type="button" class="mdl-button mdl-js-button" onclick="inputForm.submit()">
+                <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">search</i>
+            </button>
+          </form>
+        </div>
+
+        <div id="mytown_map" class="map"></div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

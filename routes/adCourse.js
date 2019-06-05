@@ -223,13 +223,15 @@ router.get('/getTownMap', function(req,res,next){
     let param = {ib: req.query.ib, jb: req.query.jb}
 
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGLON, PGTYPE1, PGTYPE2, PGURL, " +
-                  "       (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
-                  "  FROM TBL_PLAYGROUND" + 
-                  " WHERE DELETEFLAG='N' " + 
+        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGURL, PGLON, PGTYPE1, PGTYPE2, CC.CODENM PLACEICON " +
+                  " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
+                  "     , (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
+                  "  FROM TBL_PLAYGROUND TPG" + 
+                  " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+                  " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
                   "HAVING DISTANCE <= 2" + 
                   " ORDER BY PGNAME";
-        
+
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);

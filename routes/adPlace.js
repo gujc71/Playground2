@@ -68,6 +68,7 @@ router.get('/listMap', function(req,res,next){
                   " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
                   " WHERE CLASSNO='e' AND DELETEFLAG='N' AND PGTYPE1='" + pgtype1 + "' "+
                   " ORDER BY PGNAME" ;
+        console.log(sql)
         connection.query(sql, function (err, rows) {
             connection.release(); 
             if (err) console.error("err : " + err);

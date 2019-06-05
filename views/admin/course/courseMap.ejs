@@ -61,7 +61,9 @@
           data: {ib: centerPos.ib, jb: centerPos.jb},
           success: function(r){
             var positions = [];
+
             r.placelist.forEach(function(place) {
+              if (place.PGTYPE2===null) place.PGTYPE2="";
               var content = getMarker(place);
               var posInfo =  {
                 content: content, 

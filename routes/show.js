@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var pool = require('./mysqlConn');
+var dateFormat = require('dateformat');
 
 const APPKEY = require('./util').APPKEY;
 
@@ -24,6 +25,7 @@ router.get('/myTownMap', function(req,res,next){
                   " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
                   "HAVING DISTANCE <= 2" + 
                   " ORDER BY PGNAME";
+
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
@@ -83,6 +85,25 @@ router.get('/courseDetail', function(req,res,next){
                     res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:dtlList, mapInfo: {ib: dtlList[0].PGLAT, jb: dtlList[0].PGLON}, appkey: APPKEY });
                 });            
             });
+        });
+    }); 
+});
+// /////////////////////////////////////////////////////////////
+
+router.get('/streetMap', function(req,res,next){
+    let eventDate = req.query.eventDate;
+    if (!eventDate) eventDate = dateFormat(new Date(), "yyyy-mm-dd");
+
+    pool.getConnection(function (err, connection) {
+        let sql = "SELECT SEPLACE, SEDATE, SELAT, SELON, SEADDR, GROUP_CONCAT(concat(SEPLAYER, '|', SETIME, '|', SETYPE)) PLAY" +
+                  "  FROM TBL_STREETEVENT " +
+                  " WHERE SEDATE = '" + eventDate + "' " +
+                  " GROUP BY  SEPLACE, SEDATE, SELAT, SELON, SEADDR";
+//console.log(sql);
+        connection.query(sql, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+            res.render('show/streetMap', {eventDate: eventDate, placelist:rows, appkey: APPKEY});
         });
     }); 
 });

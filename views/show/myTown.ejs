@@ -16,12 +16,16 @@
         const sPosition = new daum.maps.LatLng(37.57590409118165, 126.97684292625047)
         const mapOption = { 
             center: sPosition,
-            level: 3
+            level: 8
         }; 
 
         map = new daum.maps.Map(mapContainer, mapOption);
         displayMarker(map, sPosition);
-
+        daum.maps.event.addListener(map, 'click', function(mouseEvent) {        
+            var latlng = mouseEvent.latLng; 
+            marker.setPosition(latlng);
+        });
+        
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             var locPosition = new daum.maps.LatLng(position.coords.latitude, position.coords.longitude);

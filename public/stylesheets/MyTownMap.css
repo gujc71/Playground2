@@ -9,6 +9,7 @@ wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 122px;margin-
 }
 .info .body {position: relative;overflow: hidden;}
 .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
+.info .desc4event {position: relative;margin: 5px 0 0 10px;height: 75px;}
 .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
 .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
 .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
