@@ -4,6 +4,8 @@
 
 서울 시내 아이랑 갈만한 장소들을 모아서 보여 주는 웹 사이트(NodeJS + MariaDB)로
 
+운영 중인 사이트는 [Playground](http://playground.cafe24app.com/)이다.
+
 지원하는 장소는 다음과 같고, 장소 데이터는 제공되지 않는다.
 
 - 실내 놀이터(키즈카페): http://www.localdata.kr/
@@ -11,6 +13,7 @@
   창의 놀이터: https://map.seoul.go.kr
 - 박물관/과학관: https://www.data.go.kr/dataset/15017323/standard.do
 - 도서관: https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-15480&srvType=S&serviceKind=1&currentPageNo=1
+- 분수: http://opengov.seoul.go.kr/sanction/8607834?tr_code=open
 
 ![Screenshot](./screenshot.png)
 
@@ -18,6 +21,7 @@
 
 - 우리 동네: 지정된 좌표(위도, 경도)를 중심으로 2Km 내의 시설/장소 정보 표시
 - 추천 코스: 사용자가 특정 장소를 중심으로 갈만한 코스를 정리해서 소개
+- 행사-거리공연: 서울시에서 2019년 4월 11월까지 진행하는 거리공연 정보
 
 ### Install & Run ###
 
