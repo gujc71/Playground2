@@ -18,14 +18,50 @@
           height: 50px;  
         }
     </style>        
+    <script>
+      var page=1, isLoading = false;
+      function ev_onScroll(){
+        if (isLoading) return;
+
+        var list = event.target;
+        if ( (list.scrollTop) < (list.scrollHeight - list.offsetHeight-50) ) return;
+
+        isLoading = true;
+        $.ajax({
+          type: "GET",
+          url: "getPageList",
+          data: {page:++page},
+          success: function(r){
+            r.rows.forEach(function(row) {
+              var li = $('<li class="mdl-list-courseitem mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone"/>');
+              var html = '<div class="listitem_sub">'+
+                          '<a href="courseDetail?cmno=' + row.CMNO + '">';
+              if (row.CMIMAGE) {
+                html += '<img src="/common/getimage/' + row.CMIMAGE + '" style="width:99%; height: 180px"/>';
+              } else {
+                html += '<img src="/images/noimage2.png" style="width:99%; height: 180px"/>';
+              }
+              html += '<span class="titlespan">' + row.CMTITLE + '</span>'+
+                      '</a></div>';
+              li.html(html);
+              $('#listUL').append(li);
+            });
+            isLoading = ! r.rows.length>0;
+          },
+          error: function (e) {
+              console.log("some error", e);
+          }
+        }); 
+      }
+    </script>    
 </head>
 <body>
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
     <% include ../common/header_menu.ejs %>
 
-    <main class="mdl-layout__content mdl-color--grey-100">
+    <main class="mdl-layout__content mdl-color--grey-100" onScroll="ev_onScroll()">
       <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
-        <ul class="demo-list-two mdl-list">
+        <ul id="listUL" class="demo-list-two mdl-list">
             <%
                 rows.forEach(function(row) {
             %>                

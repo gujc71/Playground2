@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
   <head>
-      <% include ../../common/htmlHead.ejs %>
+      <% include ../common/htmlHead.ejs %>
       <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
       <script src="/javascripts/dialog-polyfill.js"></script>
       <script src="/javascripts/ckeditor.js"></script>      
@@ -27,7 +27,7 @@
         });
       }   
 
-      function formSubmit(){
+      function formSubmit(status){
         var snackbarLogin = document.querySelector('#snackbarLogin');
         if ($("#cmtitle").val()==="") {
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '코스명을 입력하세요.',timeout: 2000});        
@@ -42,7 +42,13 @@
           snackbarLogin.MaterialSnackbar.showSnackbar({message: '대표 이미지를 지정하세요.',timeout: 2000});        
           return;
         }
-        
+        if (status!=="1" & $('ul#listUL li').length===0) {
+          snackbarLogin.MaterialSnackbar.showSnackbar({message: '경로가 하나 이상 지정되어야 합니다..',timeout: 2000});        
+          return;
+        }
+
+        if (status) $("#cmstatus").val(status);
+
         $("#inputForm").submit();
       }
 
@@ -59,10 +65,15 @@
       }
 
       function ev_searchClick(){
+        var keyword = $('#keyword').val();
+        if ( $.trim(keyword).length<2 ) {
+          alert("2자 이상을 입력하세요");
+          return;
+        }
         $( "#listDiv li" ).remove();
         $.ajax({
           type: "GET",
-          url: "getList",
+          url: "searchPlace",
           data: {keyword: $('#keyword').val()},
           success: function(r){
             r.rows.forEach(function(row) {
@@ -95,14 +106,6 @@
           data: {cmno:'<%=mstInfo.CMNO%>', pgno:row.PGNO},
           success: function(r){
             location.reload();
-            /*var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
-            var html = '<span class="mdl-list__item-primary-content">' +
-                        '<span><a href="/adplace/read?pgno=' + row.PGNO + '">' + row.PGNAME + '</a></span>' +
-                        '<span class="mdl-list__item-sub-title">' + row.PGADDR + '</span>' +
-                        '</span>';
-            li.html(html);
-            li.attr('id', row.PGNO);
-            $('#listUL').append(li);      */
           },
           error: function (e) {
               console.log("some error", e);
@@ -110,30 +113,16 @@
         });
       }      
 
-      function ev_deleteCourse(pgno) {
+      function ev_deleteCourse(pgno, cdorder) {
         if (!confirm("삭제하시겠습니까?")) {
           return;
         }
         $.ajax({
           type: "POST",
           url: "courseItemDelete",
-          data: {cmno:'<%=mstInfo.CMNO%>', pgno:pgno},
+          data: {cmno:'<%=mstInfo.CMNO%>', pgno:pgno, cdorder:cdorder},
           success: function(r){
             $('#' + pgno).remove();
-          },
-          error: function (e) {
-              console.log("some error", e);
-          }
-        });
-      }
-
-      function ev_showhide(isshow) {
-        $.ajax({
-          type: "POST",
-          url: "setCourseShow",
-          data: {cmno:'<%=mstInfo.CMNO%>', cmshow:isshow==="Y"?"N":"Y"},
-          success: function(r){
-            location.reload();
           },
           error: function (e) {
               console.log("some error", e);
@@ -165,16 +154,27 @@
   </head>
   <body>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-        <% include ../header_menu.ejs %>
+      <% include ../common/header_menu.ejs %>
 
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <div class="mdl-card__supporting-text" style="padding-bottom: 0px; line-height: 22px;">
+              <% if (!mstInfo.CMNO) {%>
+                작성할 코스명과 대표 이미지를 입력하세요. <br/>
+                설명은 간단하게 입력하고 <span style="color:red">임시 저장 후</span>, 경로를 추가하면서 작성하셔도 됩니다.<br/>
+              <% }%>
+              <% if (!mstInfo.CMNO || mstInfo.CMSTATUS==="1") {%>
+                내용을 모두 작성한 후 <span style="color:red">제출</span>을 하시면,<br/>
+                운영자가 확인 후 다른 사용자가 볼 수 있도록 게시합니다 (광고방지).
+              <% }%>                   
+            </div>
           <form action="save" id="inputForm" method="post" style="width: 100%;" enctype="multipart/form-data">
             <input type="hidden" name="cmno" id="cmno" value="<%=mstInfo.CMNO%>"> 
+            <input type="hidden" name="cmstatus" id="cmstatus" value="<%=mstInfo.CMSTATUS%>"> 
             <ul class="demo-list-item mdl-list">
               <li class="mdl-list__item">
                   <span class="mdl-list__item-primary-content width100">코스명</span>
-                  <input class="mdl-textfield__input" type="text" id="cmtitle" name="cmtitle" value="<%=mstInfo.CMTITLE%>">
+                  <input class="mdl-textfield__input" type="text" id="cmtitle" name="cmtitle" value="<%=mstInfo.CMTITLE%>" maxlength="50">
               </li>
               <li class="mdl-list__item">
                   <span class="mdl-list__item-primary-content width100">설명</span>
@@ -187,21 +187,25 @@
               </li>
             </ul>
             <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
-                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
-                <% if (mstInfo.CMNO) {%>                        
+                <% if (!mstInfo.CMNO || mstInfo.CMSTATUS==="1") {%>                        
+                  <a class="mdl-button mdl-button--colored mdl-button--raised" href="#" onclick="formSubmit('1')"> 임시저장</a>
+                  <a class="mdl-button mdl-button--colored mdl-button--raised" href="#" onclick="formSubmit('2')">
+                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> 저장후 제출</a>
+                <% } else {%>                        
+                  <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> 저장</a>
+                <% }%>
+                <% if (mstInfo.CMNO) {%>  
                   <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="ev_deleteClick()">
                     <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i> 삭제</a>
 
-                  <button type="button" class="mdl-button mdl-js-button " onclick="ev_showhide('<%= mstInfo.CMSHOW%>')" >사용자에게 <%= mstInfo.CMSHOW==='Y' ? "감추기":"보이기"%></button>
-                    
                   <a href="courseMap?cmno=<%=mstInfo.CMNO%>" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin-left: 200px;" target="_blank"><i class="material-icons">map</i> 지도에서 보기</a>
                   <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin-left: 200px;"onclick="ev_add()" ><i class="material-icons">add</i> 추가</button>
                 <% }%>
             </div>
           </form>
         </div>
-
+        
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
             <ul class="demo-list-two mdl-list" id="listUL">
                 <%
@@ -212,7 +216,7 @@
                           <div class="placeAvarta" style="float:left; margin-right: 10px !important;">
                             <i class="material-icons mdl-list__item-avatar noRound"><%=row.PLACEICON%></i>
                           </div>
-                          <span><a href='/board/read?brdno=<%=row.PGNO%>'><%=row.PGNAME%></a>
+                          <span><%=row.PGNAME%>
                             <select id="neworder<%=row.CDNO%>" onchange="ev_changeOrder()">
                               <% for (i=1;i<=dtlList.length;i++) { %>                
                                   <option value="<%=i%>" <%= i===parseInt(row.CDORDER)? "selected='selected'":""%> > <%=i%> </option>
@@ -223,7 +227,7 @@
                           <span class="mdl-list__item-sub-title"><%=row.PGADDR%></span>
                         </span>
                         <span class="mdl-list__item-secondary-content">
-                          <button type="button" class="mdl-button mdl-js-button" onclick="ev_deleteCourse('<%=row.PGNO%>')" ><i class="material-icons">clear</i></button>
+                          <button type="button" class="mdl-button mdl-js-button" onclick="ev_deleteCourse('<%=row.PGNO%>', <%=row.CDORDER%>)" ><i class="material-icons">clear</i></button>
                         </span>
                     </li>
                 <%

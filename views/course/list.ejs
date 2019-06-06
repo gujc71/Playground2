@@ -2,12 +2,7 @@
 <html lang="ko">
 <head>
     <% include ../common/htmlHead.ejs %>
-     
     <script>
-      function ev_new(){
-          location.href="form";
-      }
-
       var page=1, isLoading = false;
       function ev_onScroll(){
         if (isLoading) return;
@@ -19,19 +14,20 @@
         $.ajax({
           type: "GET",
           url: "getPageList",
-          data: {page:++page},
+          data: {page:++page, keyword: $('#keyword').val()},
           success: function(r){
             r.rows.forEach(function(row) {
               var li = $('<li class="mdl-list__item mdl-list__item--two-line"/>');
-              var html = '<span class="mdl-list__item-primary-content">' + 
-                         '<i class="material-icons mdl-list__item-avatar">person</i>' + 
-                         '<span><a href="read?brdno=' + row.BRDNO + '">' + row.BRDTITLE + '</a></span>' + 
-                         '<span class="mdl-list__item-sub-title">' + row.BRDWRITER + '</span>' + 
+              var html = '<span class="mdl-list__item-primary-content">' +
+                         '<i class="material-icons mdl-list__item-avatar">explore</i>'+
+                         '<span><a href="form?cmno=' + row.CMNO + '">' + row.CMTITLE + '</a></span>' +
+                         '<span class="mdl-list__item-sub-title">' + row.CMSTATUSNM + '</span>' +
                          '</span>' + 
-                         '<span class="mdl-list__item-secondary-content">' + row.BRDDATE + '</span>';
+                         '<span class="mdl-list__item-secondary-content">' + row.UPDATEDATE + '</span>';
               li.html(html);
               $('#listUL').append(li);
             });
+
             isLoading = ! r.rows.length>0;
           },
           error: function (e) {
@@ -39,7 +35,7 @@
           }
         }); 
       }
-    </script>
+    </script>    
 </head>
 <body>
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -53,11 +49,11 @@
             %>                
                 <li class="mdl-list__item mdl-list__item--two-line">
                     <span class="mdl-list__item-primary-content">
-                        <i class="material-icons mdl-list__item-avatar">person</i>
-                        <span><a href='read?brdno=<%=row.BRDNO%>'><%=row.BRDTITLE%></a></span>
-                        <span class="mdl-list__item-sub-title"><%=row.BRDWRITER%></span>
+                        <i class="material-icons mdl-list__item-avatar">explore</i>
+                        <span><a href='form?cmno=<%=row.CMNO%>'><%=row.CMTITLE%></a></span>
+                        <span class="mdl-list__item-sub-title"><%=row.CMSTATUSNM%></span>
                     </span>
-                    <span class="mdl-list__item-secondary-content"><%=row.BRDDATE%></span>
+                    <span class="mdl-list__item-secondary-content"><%=row.UPDATEDATE%></span>
                 </li>
             <%
                 });
@@ -67,9 +63,9 @@
     </main>
   </div>
   <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="ev_new()">
+    <a class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="form">
       <i class="material-icons">add</i>
-    </button>
+    </a>
   </div>
 </body>
 </html>

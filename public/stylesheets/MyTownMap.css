@@ -14,6 +14,7 @@ wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 122px;margin-
 .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
 .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
 .info .link {color: #5085BB;}
+.info .eventlink {color: #5085BB; vertical-align: top;}
 
 .map {
   display: block;
@@ -38,7 +39,16 @@ wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 122px;margin-
   font-size: 14px;
   cursor: pointer;
 }
-.mdl-list__itemtext{
+
+.mdl-list__itemtext {
+  overflow: hidden; 
+  white-space: nowrap; 
+  text-overflow: ellipsis;
+}
+
+.eventMarkerAddr {
+  width: 180px;
+  display: inline-block;  
   overflow: hidden; 
   white-space: nowrap; 
   text-overflow: ellipsis;

@@ -67,6 +67,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/common', require('./routes/common'));
 app.use('/board', require('./routes/board'));
 app.use('/show', require('./routes/show'));
+app.use('/course', require('./routes/course'));
 app.use('/adusers', require('./routes/adUsers'));
 app.use('/adplace', require('./routes/adPlace'));
 app.use('/adcourse', require('./routes/adCourse'));
@@ -85,7 +86,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('common/error');
 });
 
 

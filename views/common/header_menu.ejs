@@ -1,6 +1,17 @@
       <header class="demo-header mdl-layout__header">
         <div class="mdl-layout__header-row">
           <span class="mdl-layout-title">우리동네, 아이랑 놀곳 Ver.서울</span>
+          <div class="mdl-layout-spacer"></div>
+          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+            <i class="material-icons">more_vert</i>
+          </button>
+          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+            <% if (userno) { %> 
+              <li class="mdl-menu__item"><a href="/users/Logout">로그아웃</a></li>
+            <% } else { %> 
+              <li class="mdl-menu__item"><a href="/users/loginForm">로그인</a></li>
+            <% } %> 
+          </ul>          
         </div>
       </header>
       <div class="demo-drawer mdl-layout__drawer">
@@ -27,7 +38,8 @@
         <nav class="demo-navigation mdl-navigation">
           <!--a class="mdl-navigation__link" href="/index"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Home</a-->
           <% if (userno !== null & userno !== undefined) { %> 
-            <a class="mdl-navigation__link" href="/board"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>Board</a>
+            <a class="mdl-navigation__link" href="/board"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">forum</i>게시판</a>
+            <a class="mdl-navigation__link" href="/course"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">list</i>나의 추천코스</a>
           <% } %>
           <a class="mdl-navigation__link" href="/show/myTown"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>우리동네</a>
           <a class="mdl-navigation__link" href="/show/courseList"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">explore</i>추천 코스</a>

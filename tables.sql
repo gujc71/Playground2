@@ -15,9 +15,10 @@ CREATE TABLE COM_USER(
 /*------------------------------------------*/
 
 INSERT INTO `com_user` (`USERNO`, `USERID`, `USERNM`, `USERPW`, `USERROLE`, `PHOTO`, `ENTRYDATE`, `DELETEFLAG`) VALUES
-	(1, 'admin', 'admin', SHA2('admin', 256), 'A', NULL, now(), 'N'),
+	(1, 'admin', '운영자', SHA2('admin', 256), 'A', NULL, now(), 'N'),
 	(2, 'user1', 'Lee SunSin', SHA2('user1', 256), 'U', NULL, now(), 'N'),
 	(3, 'user2', 'So SiNo', SHA2('user2', 256), 'U', NULL, now(), 'N');
+
 
 /* ========================================================================= */
 
@@ -59,14 +60,16 @@ CREATE TABLE TBL_STREETEVENT (
 -- DROP TABLE TBL_COURSEMST;
     
 CREATE TABLE TBL_COURSEMST (
-	CMNO 	      INT		        	COMMENT '경로 master NO',
+	CMNO 	      INT		        COMMENT '경로 master NO',
 	CMTITLE     VARCHAR(50)			COMMENT '경로 제목',
-  CMDESC 	    VARCHAR(1000)		COMMENT '설명',
-  CMIMAGE	 	  VARCHAR(50)			COMMENT '대표이미지',
-  CMSHOW	 	  CHAR(1)			    COMMENT '사용자에게 출력여부',
-  CMREAD 	INT						COMMENT '조회수',
-  UPDATEDATE  DATETIME	    	COMMENT '수정일자',
-  DELETEFLAG 	CHAR(1)		    	COMMENT '삭제',
+	CMDESC 	    VARCHAR(1000)		COMMENT '설명',
+	CMIMAGE	 	VARCHAR(50)			COMMENT '대표이미지',
+	CMSTATUS 	CHAR(1)			    COMMENT '상태',	 -- 1: 임시저장, 2: 공개를 위해 제출, 3: 공개 허용(관리자), 4: 공개금지 (관리자)
+	CMREAD 		INT					COMMENT '조회수',
+	ENTRYDATE   DATETIME	    	COMMENT '작성일자',
+	UPDATEDATE  DATETIME	    	COMMENT '수정일자',
+	DELETEFLAG 	CHAR(1)		    	COMMENT '삭제',
+    USERNO		INT(11)				COMMENT '작성자',
 	PRIMARY KEY (CMNO)
 );
 
@@ -112,6 +115,11 @@ INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('t', 'F5', '생태연못');
 INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('t', 'F6', '실개천형(계단식 수로)');
 INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('t', 'F7', '일반분수');
 INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('t', 'F8', '폭포');
+INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('s', '1', '임시저장');
+INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('s', '2', '제출');
+INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('s', '3', '공개허용');
+INSERT INTO COM_CODE (CLASSNO, codecd, codenm) value('s', '4', '공개금지');
+
 
 INSERT INTO `TBL_COURSEDTL` (`CDNO`, `CMNO`, `PGNO`, `CDORDER`) VALUES
 	(8, 1, 'B000554299', 1),
@@ -141,12 +149,12 @@ INSERT INTO `TBL_COURSEDTL` (`CDNO`, `CMNO`, `PGNO`, `CDORDER`) VALUES
 	(38, 7, 'D000001390', 2);
 
 
-INSERT INTO `TBL_COURSEMST` (`CMNO`, `CMTITLE`, `CMDESC`, `UPDATEDATE`, `DELETEFLAG`, `CMSHOW`, `CMIMAGE`) VALUES
-	(1, '어린이 대공원 놀이터', '<p>어린이 대공원</p>', now(), 'N', 'Y', NULL),
-	(2, '중계근린공원', '<p>중계동 공원</p><p>&nbsp;</p><p>한달에 한번꼴로 어린이 뮤지컬이 노원구민센터에서 진행된다.</p><p>별로도 확인하기는 어렵지만, 대부분 인터파크에 등록되기 때문에 인터파크에서 확인 후 간다면 좀더 즐거운 하루를 보낼 수 있을 것이다.</p><p>&nbsp;</p>', '2019-05-16 13:06:16', 'N', 'Y', NULL),
-	(3, '동대문에서 쇼핑하는 동안', '<p>동대문</p>', now(), 'N', 'Y', NULL),
-	(6, '중계동 나비 정원에서 천변으로', '<p>중계동 나비 정원을 들렸다가</p>', now(), 'N', 'Y', NULL),
-	(7, '풍물 시장과 도서관', '<p>풍물 시장들</p>', now(), 'N', 'Y', NULL);
+INSERT INTO `TBL_COURSEMST` (`CMNO`, `USERNO`, `CMTITLE`, `CMDESC`, `ENTRYDATE`, `UPDATEDATE`, `DELETEFLAG`, `CMSTATUS`, `CMIMAGE`) VALUES
+	(1, 1, '어린이 대공원 놀이터', '<p>어린이 대공원</p>', now(), now(), 'N', '3', NULL),
+	(2, 1, '중계근린공원', '<p>중계동 공원</p><p>&nbsp;</p><p>한달에 한번꼴로 어린이 뮤지컬이 노원구민센터에서 진행된다.</p><p>별로도 확인하기는 어렵지만, 대부분 인터파크에 등록되기 때문에 인터파크에서 확인 후 간다면 좀더 즐거운 하루를 보낼 수 있을 것이다.</p><p>&nbsp;</p>', now(), now(), 'N', '3', NULL),
+	(3, 1, '동대문에서 쇼핑하는 동안', '<p>동대문</p>', now(), now(), 'N', '3', NULL),
+	(6, 1, '중계동 나비 정원에서 천변으로', '<p>중계동 나비 정원을 들렸다가</p>', now(), now(), 'N', '3', NULL),
+	(7, 1, '풍물 시장과 도서관', '<p>풍물 시장들</p>', now(), now(), 'N', '3', NULL);
 
 
 INSERT INTO `TBL_PLAYGROUND` (`PGNO`, `PGNAME`, `PGLAT`, `PGLON`, `PGURL`, `PGTEL`, `PGADDR`, `PGTYPE1`, `PGTYPE2`, `PGSIZE`, `PGPRICE`, `PGDESC`, `PGEXTRA1`, `PGEXTRA2`, `PGEXTRA3`, `UPDATEDATE`, `DELETEFLAG`) VALUES

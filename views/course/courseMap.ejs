@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
-    <% include ../../common/htmlHead.ejs %>
+    <% include ../common/htmlHead.ejs %>
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=<%=appkey%>"></script>      
     <script src="/javascripts/daumMap.js"></script>   
     <link rel="stylesheet" href="/stylesheets/MyTownMap.css">
@@ -83,7 +83,7 @@
 </head>
 <body>
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-    <% include ../header_menu.ejs %>
+    <% include ../common/header_menu.ejs %>
 
     <main class="mdl-layout__content mdl-color--grey-100">
       <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
@@ -91,7 +91,7 @@
             <button type="button" class="mdl-button mdl-js-button mdl-button--raised" onclick="ev_listClick()" style="vertical-align: top;margin-right: 20px;">
                 <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">menu</i>
             </button>
-            <% include ../../common/selectPlaygroundType.ejs %>
+            <% include ../common/selectPlaygroundType.ejs %>
             <button type="button" class="mdl-button mdl-js-button mdl-button--raised" onclick="ev_getTownMap()" style="vertical-align: top;margin-right: 20px;">
                 2Km내의 다른 시설 표시
             </button>

@@ -4,6 +4,15 @@
   <% include ../common/htmlHead.ejs %>
   <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
   <script src="/javascripts/dialog-polyfill.js"></script>
+  <style>
+    .mdl-data-table th {
+      text-align: center !important;
+    }
+    .mdl-data-table td {
+      text-align: left !important;
+      cursor: pointer;
+    }
+  </style>
   <script>
     var snackbarMessage = null, 
         dialog = null;
@@ -25,6 +34,7 @@
       $("#userid").val("");
       $("#usernm").val("");
       $("#userpw").val("");
+      $("#usermail").val("");
       $("#pwDiv").show();      
       $("#userid").prop( "disabled", false );
       dialog.showModal();
@@ -40,6 +50,7 @@
           $("#userno").val(userno);
           $("#userid").val(row.USERID);
           $("#usernm").val(row.USERNM);
+          $("#usermail").val(row.USERMAIL);
           $("#pwDiv").hide();
           $("#userid").prop( "disabled", true );
         });
@@ -57,7 +68,7 @@
       $.ajax({
         type: "POST",
         url: "save",
-        data: {userno:$("#userno").val(), userid:$("#userid").val(), usernm:$("#usernm").val(), userpw:$("#userpw").val(),},
+        data: {userno:$("#userno").val(), userid:$("#userid").val(), usernm:$("#usernm").val(), userpw:$("#userpw").val(), usermail:$("#usermail").val(),},
         success: function(r){
             if (r=="OK") location.reload(); //location.href="list";
             else 
@@ -68,29 +79,64 @@
         }
       });   
     }
+    var page=1, isLoading = false;
+    function ev_onScroll(){
+      if (isLoading) return;
+
+      var list = event.target;
+      if ( (list.scrollTop) < (list.scrollHeight - list.offsetHeight-50) ) return;
+
+      isLoading = true;
+      $.ajax({
+        type: "GET",
+        url: "getPageList",
+        data: {page:++page},
+        success: function(r){
+          r.rows.forEach(function(row) {
+            var li = $('<tr/>');
+            var html = '<td>' + row.USERNM + '</td>' + 
+                       '<td>' + row.USERID + '</td>' + 
+                       '<td>' + row.USERMAIL + '</td>' + 
+                       '<td>' + row.ENTRYDATE + '</td>';
+                                       
+            li.html(html);
+            $('#listUL').append(li);
+            li.click(function() {
+              fn_rowClick(row.USERNO);
+            });
+          });
+          isLoading = ! r.rows.length>0;
+        },
+        error: function (e) {
+            console.log("some error", e);
+        }
+      }); 
+    }
   </script>
 </head>
 <body>
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
     <% include header_menu.ejs %>
 
-    <main class="mdl-layout__content mdl-color--grey-100">
-    <div class="mdl-grid demo-content">
+    <main class="mdl-layout__content mdl-color--grey-100" onScroll="ev_onScroll()">
+      <div class="mdl-grid demo-content">
           <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="min-width:400px">
               <thead>
                 <tr>
-                  <th class="mdl-data-table__cell--non-numeric">Name</th>
+                  <th>Name</th>
                   <th>ID</th>
+                  <th>Email</th>
                   <th>Join</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="listUL">
                   <%
                   rows.forEach(function(row) {
                   %>                 
-                    <tr>
-                      <td class="mdl-data-table__cell--non-numeric" onclick="fn_rowClick(<%=row.USERNO%>)"><%=row.USERNM%></td>
+                    <tr onclick="fn_rowClick(<%=row.USERNO%>)">
+                      <td><%=row.USERNM%></td>
                       <td><%=row.USERID%></td>
+                      <td><%=row.USERMAIL%></td>
                       <td><%=row.ENTRYDATE%></td>
                     </tr>
                 <%
@@ -98,7 +144,7 @@
                 %>                
               </tbody>
             </table>
-    </div>
+      </div>
     </main>
   </div>
   <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
@@ -124,6 +170,10 @@
                 <div class="mdl-cell--4-col" style="display: inline-block">Password</div>
                 <div class="mdl-cell--8-col mdl-textfield mdl-js-textfield"><input class="mdl-textfield__input" type="password" id="userpw" name="userpw"/></div>
             </div>   
+            <div class="mdl-cell--12-col">
+                <div class="mdl-cell--4-col" style="display: inline-block">Email</div>
+                <div class="mdl-cell--8-col mdl-textfield mdl-js-textfield"><input class="mdl-textfield__input" type="text" id="usermail" name="usermail"/></div>
+            </div>                    
         </div>
       </form>
       <div class="mdl-dialog__actions">

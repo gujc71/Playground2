@@ -26,8 +26,8 @@ function getMarker4Event(place) {
             '        <div class="title">' + place.SEPLACE +'</div>' + 
             '        <div class="body">' + 
             '            <div class="desc4event">' + 
-            '                <div class="ellipsis">' + place.SEADDR + ' <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.SELON + ',' + place.SELAT + '" target="_blank" class="link">길찾기</a>'+
-            '                  <a href="myTownMap?ib=' + place.SELAT + '&jb=' + place.SELON + '" target="_blank" class="link">주변검색</a> '+
+            '                <div><div class="eventMarkerAddr">' + place.SEADDR + '</div> <a href="http://map.daum.net/link/to/' + place.SEPLACE + ',' + place.SELON + ',' + place.SELAT + '" target="_blank" class="eventlink">길찾기</a>'+
+            '                  <a href="myTownMap?ib=' + place.SELAT + '&jb=' + place.SELON + '" target="_blank" class="eventlink">주변검색</a> '+
             '                </div>' +
             '                <div>';
     list.forEach(function(element) {

@@ -6,18 +6,38 @@ router.get('/', function(req, res, next) {
     res.redirect('/board/list');
 });
 
+function getListSQL(page) {
+    if (!page) page=1;
+
+    let sql = "SELECT BRDNO, BRDTITLE, USERNM BRDWRITER, DATE_FORMAT(BRDDATE,'%Y-%m-%d') BRDDATE" +
+              "  FROM TBL_BOARD TB " +
+              " INNER JOIN COM_USER CU ON CU.USERNO=TB.USERNO " + 
+              " ORDER BY TB.BRDNO DESC" +
+              " LIMIT " + ((page-1)*20) + ", 20";    
+
+    return sql;
+}
+
 router.get('/list', function(req,res,next){
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT BRDNO, BRDTITLE, USERNM BRDWRITER, DATE_FORMAT(BRDDATE,'%Y-%m-%d') BRDDATE" +
-                   " FROM TBL_BOARD TB " +
-                   "INNER JOIN COM_USER CU ON CU.USERNO=TB.USERNO " + 
-                   "ORDER BY TB.BRDNO DESC";
-        
-        connection.query(sql, function (err, rows) {
+        connection.query(getListSQL(req.query.page), function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
 
             res.render('board/list', {rows: rows});
+        });
+    }); 
+});
+
+router.get('/getPageList', function(req,res,next){  // paging
+    let page = req.query.page;    
+
+    pool.getConnection(function (err, connection) {
+        connection.query(getListSQL(page), function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.send({rows: rows});
         });
     }); 
 });

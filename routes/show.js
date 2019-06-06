@@ -34,14 +34,21 @@ router.get('/myTownMap', function(req,res,next){
     }); 
 });
 // /////////////////////////////////////////////////////////////
+function getListSQL(page) {
+    if (!page) page=1;
+
+    let sql = "SELECT CMNO, CMTITLE, CMIMAGE, DATE_FORMAT(UPDATEDATE,'%Y-%m-%d') UPDATEDATE" +
+              "  FROM TBL_COURSEMST TCM " +
+              " WHERE DELETEFLAG='N' AND CMSTATUS='3'" +
+              " ORDER BY TCM.CMNO DESC" + 
+              " LIMIT " + ((page-1)*20) + ", 20";    
+ console.log(sql);
+    return sql;
+}
+
 router.get('/courseList', function(req,res,next){
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT CMNO, CMTITLE, CMIMAGE, DATE_FORMAT(UPDATEDATE,'%Y-%m-%d') UPDATEDATE" +
-                  "  FROM TBL_COURSEMST TCM " +
-                  " WHERE DELETEFLAG='N' AND CMSHOW='Y' " +
-                   "ORDER BY TCM.CMNO DESC";
-        
-        connection.query(sql, function (err, rows) {
+        connection.query(getListSQL(req.query.page), function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
 
@@ -50,20 +57,31 @@ router.get('/courseList', function(req,res,next){
     }); 
 });
 
+router.get('/getPageList', function(req,res,next){
+    pool.getConnection(function (err, connection) {
+        connection.query(getListSQL(req.query.page), function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.send({rows: rows});
+        });
+    }); 
+});
+
 router.get('/courseDetail', function(req,res,next){
     if (!req.query.cmno) {
-        res.render('admin/course/form', {mstInfo: "", dtlList:[]});
+        res.render('common/error');                
         return;
     }
     pool.getConnection(function (err, connection) {
         let sql = "SELECT CMNO, CMTITLE, CMDESC, DATE_FORMAT(UPDATEDATE,'%Y-%m-%d') UPDATEDATE" + 
                   "  FROM TBL_COURSEMST TCM " +
-                  " WHERE DELETEFLAG='N' AND CMSHOW='Y' AND CMNO=" + req.query.cmno;
+                  " WHERE DELETEFLAG='N' AND CMSTATUS='3' AND CMNO=" + req.query.cmno;
         connection.query(sql, function (err, mstInfo) {
             if (err) console.error("err : " + err);
             if (mstInfo.length===0) {
                 connection.release();
-                res.render('error');                
+                res.render('common/error');                
                 return;
             }
 

@@ -2,6 +2,14 @@
 <html lang="ko">
 <head>
     <% include ../../common/htmlHead.ejs %>
+    <script>
+      function ev_changeStatus(cmno, status) {
+        if (!confirm("상태를 변경하시겠습니까?")) {
+          return;
+        }  
+        location.href = "changeStatus?cmno=" + cmno +"&status=" + status;
+      }
+    </script>
 </head>
 <body>
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -16,7 +24,17 @@
                 <li class="mdl-list__item mdl-list__item--two-line">
                     <span class="mdl-list__item-primary-content">
                         <i class="material-icons mdl-list__item-avatar">explore</i>
-                        <span><a href='form?cmno=<%=row.CMNO%>'><%=row.CMTITLE%></a></span>
+                        <span>
+                          <a href='/course/form?cmno=<%=row.CMNO%>' target="_blank"><%=row.CMTITLE%></a>
+                          <span style="font-size: 14px; color: rgba(0,0,0,.54); margin-left:10px;"><%=row.USERNM%></span>
+                        </span>
+                        <span class="mdl-list__item-sub-title">
+                          <span><%=row.CMSTATUSNM%></span>
+                          <% if (row.CMSTATUS==="2") {%> 
+                            <a onclick="ev_changeStatus(<%=row.CMNO%>, 3)"><i class="material-icons" style="vertical-align: middle; margin-left:50px">explore</i> 공개허용</a>
+                            <a onclick="ev_changeStatus(<%=row.CMNO%>, 4)"><i class="material-icons" style="vertical-align: middle; ">highlight_off</i>공개금지</a>
+                          <% }%>
+                        </span>
                     </span>
                     <span class="mdl-list__item-secondary-content"><%=row.UPDATEDATE%></span>
                 </li>
@@ -26,11 +44,6 @@
         </ul>
       </div>
     </main>
-  </div>
-  <div style="bottom: 30px;position: absolute;right: 30px; z-index:99">
-    <a class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" href="form">
-      <i class="material-icons">add</i>
-    </a>
   </div>
 </body>
 </html>

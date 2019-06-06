@@ -8,23 +8,30 @@ router.get('/', function(req, res, next) {
     res.redirect('/adplace/list');
 });
 
+function getListSQL(page, pgtype1, keyword) {
+    if (!page) page=1;
+    if (!pgtype1) pgtype1="";
+
+    let sql = "SELECT PGNO, PGNAME, PGADDR" + 
+              "  FROM TBL_PLAYGROUND TPG " +
+              " WHERE DELETEFLAG='N' ";
+    if (pgtype1)  sql += " AND PGTYPE1='" + pgtype1 + "'";
+    if (keyword)  sql += " AND PGNAME LIKE '%" + keyword + "%'";
+
+    sql += " ORDER BY PGNAME" +
+           " LIMIT " + ((page-1)*20) + ", 20";
+
+    return sql;
+}
+
 router.get('/list', function(req,res,next){
     let pgtype1 = req.query.pgtype1;
     let keyword = req.query.keyword;
     let page = req.query.page;
-    if (!page) page=1;
-    if (!pgtype1) pgtype1="";
 
     pool.getConnection(function (err, connection) {
-        let sql = "SELECT PGNO, PGNAME, PGADDR" + 
-                  "  FROM TBL_PLAYGROUND TPG " +
-                  " WHERE DELETEFLAG='N' ";
-        if (pgtype1)  sql += " AND PGTYPE1='" + pgtype1 + "'";
-        if (keyword)  sql += " AND PGNAME LIKE '%" + keyword + "%'";
-        sql +=    " ORDER BY PGNAME" +
-                  " LIMIT " + ((page-1)*20) + ", 20";
         
-        connection.query(sql, function (err, rows) {
+        connection.query(getListSQL(page, pgtype1, keyword), function (err, rows) {
             if (err) console.error("err : " + err);
             connection.release();
 
@@ -33,22 +40,9 @@ router.get('/list', function(req,res,next){
     }); 
 });
 
-router.get('/getList', function(req,res,next){  // paging
-    let pgtype1 = req.query.pgtype1;
-    let keyword = req.query.keyword;
-    let page = req.query.page;
-    if (!page) page=1;
-    if (!pgtype1) pgtype1='A';
-
+router.get('/getPageList', function(req,res,next){  // paging
     pool.getConnection(function (err, connection) {
-        let sql = "SELECT PGNO, PGNAME, PGADDR" +
-                  "  FROM TBL_PLAYGROUND TPG " +
-                  " WHERE DELETEFLAG='N' AND PGTYPE1='" + pgtype1 + "' ";
-        if (keyword)  sql += " AND PGNAME LIKE '%" + keyword + "%'";
-        sql +=    " ORDER BY PGNAME" +
-                  " LIMIT " + ((page-1)*20) + ", 20";
-        
-        connection.query(sql, function (err, rows) {
+        connection.query(getListSQL(req.query.page, req.query.pgtype1, req.query.keyword) , function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
 

@@ -3,11 +3,11 @@
 <head>
     <% include ../../common/htmlHead.ejs %>
     <script>
-      var page=1, isLoading = false;
       function ev_new(){
           location.href="form";
       }
 
+      var page=1, isLoading = false;
       function ev_onScroll(){
         if (isLoading) return;
 
@@ -17,7 +17,7 @@
         isLoading = true;
         $.ajax({
           type: "GET",
-          url: "getList",
+          url: "getPageList",
           data: {pgtype1: '<%=pgtype1%>', page:++page, keyword: $('#keyword').val()},
           success: function(r){
             r.rows.forEach(function(row) {
