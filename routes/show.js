@@ -106,6 +106,64 @@ router.get('/courseDetail', function(req,res,next){
         });
     }); 
 });
+// ====================================================================
+
+router.get('/getCourseReply', function(req,res,next){
+    let sql = "SELECT RENO, REMEMO, REDATE, TCR.USERNO, CU.USERNM, CU.PHOTO, IF (TCR.USERNO='" + req.session.userno + "', 'Y','') ISMINE" +
+              "     , DATE_FORMAT(REDATE,'%Y-%m-%d %h:%i') REDATE"+
+              "  FROM TBL_COURSEREPLY TCR"+
+              " INNER JOIN COM_USER CU ON CU.USERNO=TCR.USERNO"+
+              " WHERE REDELETEFLAG='N' AND CMNO=" + req.query.cmno+
+              " ORDER BY RENO";
+              console.log(sql);              
+    pool.getConnection(function (err, connection) {
+        connection.query(sql, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.send(rows);
+        });
+    }); 
+});
+
+router.post('/replySave', function(req,res,next){
+    let reno = req.body.reno;
+
+    pool.getConnection(function (err, connection) {
+        let data = [], sql = "";
+        if (reno) {
+            data = [req.body.rememo, reno];
+            sql = "UPDATE TBL_COURSEREPLY" +
+                    " SET REMEMO=?" +
+                  " WHERE RENO=?";
+        } else {
+            data = [req.body.cmno, req.body.rememo, req.session.userno];
+            sql = "INSERT INTO TBL_COURSEREPLY(CMNO, REMEMO, USERNO, REDATE, REDELETEFLAG) VALUES(?,?,?, NOW(), 'N')";
+        }
+        
+        connection.query(sql, data, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.redirect('courseDetail?cmno='+req.body.cmno);
+        }); 
+    }); 
+});
+
+router.get('/replyDelete', function(req,res,next){
+    pool.getConnection(function (err, connection) {
+        var sql = "UPDATE TBL_COURSEREPLY" +
+                  "   SET REDELETEFLAG='Y'" +
+                  " WHERE RENO=" + req.query.reno;
+        connection.query(sql, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.redirect('courseDetail?cmno='+req.query.cmno);
+        });
+    }); 
+});
+
 // /////////////////////////////////////////////////////////////
 
 router.get('/streetMap', function(req,res,next){

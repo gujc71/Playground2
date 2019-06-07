@@ -12,11 +12,11 @@
     </style>   
     
     <script>
-      var snackbarLogin = null, 
+      var snackbarMsg = null, 
           dialog = null;
 
       window.onload = function () {
-        snackbarLogin = document.querySelector('#snackbarLogin');
+        snackbarMsg = document.querySelector('#snackbarMsg');
 
         dialog = document.querySelector('dialog');
         if (! dialog.showModal) {
@@ -35,9 +35,9 @@
         var pw1 = $("#passwd1").val().trim();
         var pw2 = $("#passwd2").val().trim();
 
-        if (pw1==='') {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'input your new password.',timeout: 2000}); return;}
-        if (pw2==='') {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'input your conform password.',timeout: 2000}); return;}
-        if (pw1!==pw2) {snackbarLogin.MaterialSnackbar.showSnackbar({message: 'not match new password and conform.',timeout: 2000}); return;}
+        if (pw1==='') {snackbarMsg.MaterialSnackbar.showSnackbar({message: 'input your new password.',timeout: 2000}); return;}
+        if (pw2==='') {snackbarMsg.MaterialSnackbar.showSnackbar({message: 'input your conform password.',timeout: 2000}); return;}
+        if (pw1!==pw2) {snackbarMsg.MaterialSnackbar.showSnackbar({message: 'not match new password and conform.',timeout: 2000}); return;}
         dialog.close();
 
         $.ajax({
@@ -46,7 +46,7 @@
           data: { userpw: pw1 }
         })
           .done(function( msg ) {
-            snackbarLogin.MaterialSnackbar.showSnackbar({message: 'changed Password.',timeout: 2000});        
+            snackbarMsg.MaterialSnackbar.showSnackbar({message: 'changed Password.',timeout: 2000});        
           });
       }
 
@@ -65,7 +65,7 @@
             processData: false,
             contentType: false,
             success: function(r){
-              $("#userphoto").attr("src","/common/getimage?filename=" + r);
+              $("#userphoto").attr("src","/common/getimage/" + r);
             },
             error: function (e) {
                 console.log("some error", e);
@@ -76,11 +76,11 @@
       // Save
       function formSubmit(){
         if ($("#usernm").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
           return;
         }
         if ($("#usermail").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
           return;
         }
         $.ajax({
@@ -89,7 +89,7 @@
           data: { usernm: $("#usernm").val().trim(), usermail: $("#usermail").val().trim() }
         })
           .done(function( msg ) {
-            snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Saved your name.',timeout: 2000});        
+            snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Saved your name.',timeout: 2000});        
           });
       }
     </script>   
@@ -101,30 +101,30 @@
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
           <input accept="image/*" style="display: none" id="userfile"  type="file" onchange="ev_photoChange()"/>
-              <ul class="demo-list-item mdl-list">
-                <li class="mdl-list__item">
-                    <%if (row.PHOTO) { %> 
-                      <img class="userphoto" src="/users/getPhoto?filename=<%=row.PHOTO%>" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
-                    <% } else {%>
-                      <img class="userphoto" src="/images/user.jpg" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
-                    <% } %>
-                    <div class="mdl-tooltip" data-mdl-for="userphoto">Click to Change</div>
-                </li>      
-                <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content width100">이름</span>
-                    <input class="mdl-textfield__input" type="text" id="usernm" name="usernm" value="<%=row.USERNM%>">
-                </li>
-                <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content width100">이메일</span>
-                    <input class="mdl-textfield__input" type="text" id="usermail" name="usermail" value="<%=row.USERMAIL%>">
-                </li>
-              </ul>
-                <div class="mdl-card__actions mdl-card--border">
-                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
-                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
-                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="fn_showDialog()">
-                        <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Change Password</a>
-                </div>
+          <ul class="demo-list-item mdl-list">
+            <li class="mdl-list__item">
+                <%if (row.PHOTO) { %> 
+                  <img class="userphoto" src="/common/getimage/<%=row.PHOTO%>" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
+                <% } else {%>
+                  <img class="userphoto" src="/images/user.jpg" id="userphoto" alt="UserPhoto" onclick="ev_imageClick()"/>
+                <% } %>
+                <div class="mdl-tooltip" data-mdl-for="userphoto">Click to Change</div>
+            </li>      
+            <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content width100">이름</span>
+                <input class="mdl-textfield__input" type="text" id="usernm" name="usernm" value="<%=row.USERNM%>">
+            </li>
+            <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content width100">이메일</span>
+                <input class="mdl-textfield__input" type="text" id="usermail" name="usermail" value="<%=row.USERMAIL%>">
+            </li>
+          </ul>
+          <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="formSubmit()">
+                  <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Save</a>
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="fn_showDialog()">
+                  <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Change Password</a>
+          </div>
         </div>
       </main>
     </div>
@@ -147,7 +147,7 @@
         </div>
     </dialog>
 
-    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
       <div class="mdl-snackbar__text"></div>
       <button class="mdl-snackbar__action" type="button"></button>
   </div>     

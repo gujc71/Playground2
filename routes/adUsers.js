@@ -9,8 +9,9 @@ router.get('/', function(req, res, next) {
 function getListSQL(page) {
     if (!page) page=1;
 
-    let sql = "SELECT USERNO, USERID, USERNM, USERMAIL, DATE_FORMAT(ENTRYDATE,'%Y-%m-%d') ENTRYDATE" +
-              " FROM COM_USER CU " +
+    let sql = "SELECT USERNO, USERID, USERNM, USERMAIL, CODENM, DATE_FORMAT(ENTRYDATE,'%Y-%m-%d') ENTRYDATE" +
+              "  FROM COM_USER CU " +
+              "  LEFT OUTER JOIN COM_CODE CC ON CU.USERSNS=CC.CODECD AND CC.CLASSNO='sns' " +
               " WHERE DELETEFLAG='N' AND USERROLE!='A'" +
               " ORDER BY CU.USERNO DESC" +
               " LIMIT " + ((page-1)*20) + ", 20";    

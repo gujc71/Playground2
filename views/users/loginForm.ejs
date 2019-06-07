@@ -19,13 +19,13 @@
         $("#userid").focus();
       }
       function formSubmit(){
-        var snackbarLogin = document.querySelector('#snackbarLogin');
+        var snackbarMsg = document.querySelector('#snackbarMsg');
         if ($("#userid").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter your ID.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter your ID.',timeout: 2000});        
           return;
         }
         if ($("#userpw").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter a password.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter a password.',timeout: 2000});        
           return;
         }
         $("#inputForm").submit();
@@ -68,7 +68,7 @@
             </div>
           </main>
         </div>
-        <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+        <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
             <div class="mdl-snackbar__text"></div>
             <button class="mdl-snackbar__action" type="button"></button>
         </div>        

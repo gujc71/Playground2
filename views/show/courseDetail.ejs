@@ -42,7 +42,8 @@
     
     <script>
       var markerInfo = null;
-      var dialog = null;      
+      var dialogPlace = null;
+      var dialogReply = null;
 
       window.onload = function () {
         var dtlList = <%-JSON.stringify(dtlList).replace(/null/gi, '""')%>;
@@ -68,7 +69,7 @@
             str += '<a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank" class="link">길찾기</a>'; 
             $("#pgetc").html(str);
             
-            dialog.showModal();
+            dialogPlace.showModal();
           });
         });
         markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions);
@@ -77,13 +78,23 @@
 
         $('main').scroll(scrollFunction);
 
-        dialog = document.querySelector('dialog');
-        if (! dialog.showModal) {
-          dialogPolyfill.registerDialog(dialog);
+        dialogPlace = document.getElementById('dialogPlace');
+        if (! dialogPlace.showModal) {
+          dialogPolyfill.registerDialog(dialogPlace);
         }
-        dialog.querySelector('.close').addEventListener('click', function() {
-          dialog.close();
-        });        
+        dialogPlace.querySelector('.close').addEventListener('click', function() {
+          dialogPlace.close();
+        });       
+        
+        dialogReply = document.getElementById('dialogReply');
+        if (! dialogReply.showModal) {
+            dialogPolyfill.registerDialog(dialogReply);
+        }
+        dialogReply.querySelector('.close').addEventListener('click', function() {
+            dialogReply.close();
+        });
+
+        getCourseReply();
       }      
 
       function scrollFunction() {
@@ -102,6 +113,78 @@
       function ev_toTop() {
         $('main').animate({ scrollTop: 0 }, 'slow');
       } 
+    // ////////////////////////////////////
+
+    function getCourseReply(){
+        $.ajax({
+          type: "GET",
+          url: "getCourseReply",
+          data: {cmno:<%=mstInfo.CMNO%>},
+          success: function(replyList){
+            replyList.forEach(function(row) {
+              var li = $('<li class="mdl-list__item mdl-list__item--two-line height_auto">');
+              var html = '<span class="mdl-list__item-primary-content height_auto">';
+              if (row.PHOTO) { 
+                html += '<img class="userAvatar" src="/common/getimage/' + row.PHOTO + '" alt="UserPhoto"/>';
+              } else {
+                html += '<i class="material-icons mdl-list__item-avatar">person</i>';
+              } 
+              html += '<span>' + row.USERNM +
+                      '<span class="smallFont">' + row.REDATE + '</span>';
+              if (row.ISMINE) {
+                html += '<a onclick="ev_replyDelete(' + row.RENO + ')" title="Delete"><i class="mdl-color-text--blue-grey-400 material-icons material-icons4reply" role="presentation">delete</i></a>' +
+                        '<a onclick="ev_replyModify(' + row.RENO + ')" title="Modify"><i class="mdl-color-text--blue-grey-400 material-icons material-icons4reply" role="presentation">create</i> </a>';
+              }
+              html += '</span>' +
+                      '<span class="mdl-list__item-sub-title" id="reno' + row.RENO + '">' + row.REMEMO + '</span>'+
+                      '</span>';
+
+              li.css({cursor: "default"});
+              li.html(html);
+              $('#replyListUL').append(li);
+
+            });
+          }
+        });  
+      }    
+
+    function ev_replySave(suffix){
+        var rememo = $.trim($("#rememo"+suffix).val());
+        if (rememo==="") {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter reply.',timeout: 2000});        
+          return;
+        }
+        if (rememo.length> 500) {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please Enter 500 characters or less.',timeout: 2000});        
+          return;
+        }
+        $("#replyForm"+suffix).submit();
+    }
+
+    function ev_replyModifySave(){
+        var rememo = $.trim($("#mod_rememo").val());
+        if (rememo==="") {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter reply.',timeout: 2000});        
+          return;
+        }
+        if (rememo.length> 500) {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please Enter 500 characters or less.',timeout: 2000});        
+          return;
+        }
+        $("#replyModifyForm").submit();
+    }
+
+    function ev_replyDelete(reno){
+        if (!confirm("삭제하시겠습니까?")) return;
+
+        location.href = "replyDelete?cmno=<%=mstInfo.CMNO%>&reno=" + reno;
+    }
+
+    function ev_replyModify(reno){
+        $("#reno_mod").val(reno);
+        $("#rememo_mod").val($("#reno"+reno).text());
+        dialogReply.showModal();
+    }      
     </script>   
   </head>
   <body>
@@ -134,6 +217,29 @@
         </div>  
         
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <% if (userno) { %>
+              <div class="mdl-cell--7-col mdl-cell--12-col-tablet ">
+                  <form action="replySave" id="replyForm" method="post">
+                    <input type="hidden" id="cmno" name="cmno" value="<%=mstInfo.CMNO%>"/>
+                    <textarea id="rememo" name="rememo" rows="2" class="memoInput" placeholder="댓글을 입력하세요..."></textarea>
+                </form>
+              </div>
+              <div class="mdl-card__media1 mdl-cell--5-col mdl-cell--12-col-tablet ">
+                <button class="mdl-button mdl-button--colored mdl-js-button mdl-button--raised" href="#" onclick="ev_replySave('')">
+                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Reply Save</button>
+              </div>
+            <% } else { %>
+              <div class="mdl-cell--7-col mdl-cell--12-col-tablet ">
+                  <div style="border: 1px solid  rgba(0,0,0,.1);height: 40px;text-align: center;padding-top: 15px;">
+                      <a href="/users/loginForm">로그인을 하시면 댓글을 등록할 수 있습니다.</a>
+                  </div>  
+              </div>  
+            <% } %>
+
+            <ul id="replyListUL" class="demo-list-two mdl-list"></ul>
+        </div>    
+
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
           <div id="mytown_map" class="map" style="width: 100%; height: 500px;"></div>      
         </div>
 
@@ -145,23 +251,38 @@
       </main>
     </div>
 
-    <dialog class="mdl-dialog">
+    <dialog class="mdl-dialog" id="dialogPlace">
       <h4 class="mdl-dialog__title" id="pgname">이름</h4>
       <div class="mdl-dialog__content" style="min-height: 70px;">
-              <div style="float:left">
-                <div class="placeAvarta" id="placeAvarta3dialog"></div>
-              </div>
-              <div style="float:left; padding-left: 10px; width: 250px">
-                <div id="pgaddr">주소</div>
-                <div id="pgetc" class="info">etc</div>
-              </div>
+        <div style="float:left">
+          <div class="placeAvarta" id="placeAvarta3dialog"></div>
+        </div>
+        <div style="float:left; padding-left: 10px; width: 250px">
+          <div id="pgaddr">주소</div>
+          <div id="pgetc" class="info">etc</div>
+        </div>
       </div>
       <div class="mdl-dialog__actions">
         <button type="button" class="mdl-button close">Close</button>
       </div>
+    </dialog> 
+
+    <dialog class="mdl-dialog" id="dialogReply">
+      <h4 class="mdl-dialog__title">Reply</h4>
+      <div class="mdl-dialog__content" style="padding: 5px 0px 0px 0px;">
+        <form action="replySave" id="replyForm_mod" method="post">
+          <input type="hidden" id="cmno_mod" name="cmno" value="<%=mstInfo.CMNO%>"/>
+          <input type="hidden" id="reno_mod" name="reno"/>
+          <textarea id="rememo_mod" name="rememo" rows="10" class="memoInput"></textarea>
+        </form>
+      </div>
+      <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button" onclick="ev_replySave('_mod')">Save</button>
+        <button type="button" class="mdl-button close">Close</button>
+      </div>
     </dialog>  
 
-    <div id="toTop" style="bottom: 30px;position: absolute;right: 30px; z-index:99; display:none;">
+    <div id="toTop" style="bottom: 30px;position: absolute;right: 10px; z-index:99; display:none;">
       <a class="mdl-button mdl-js-button mdl-button--fab " style="width:30px;height: 30px;min-width:30px;" onclick="ev_toTop()">
         <i class="material-icons" style="color:red">arrow_upward</i>
       </a>

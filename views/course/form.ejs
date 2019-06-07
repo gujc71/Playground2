@@ -28,22 +28,22 @@
       }   
 
       function formSubmit(status){
-        var snackbarLogin = document.querySelector('#snackbarLogin');
+        var snackbarMsg = document.querySelector('#snackbarMsg');
         if ($("#cmtitle").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '코스명을 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '코스명을 입력하세요.',timeout: 2000});        
           return;
         }
         $("#cmdesc").val(cmdescEditor.getData());
         if ($("#cmdesc").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '코스에 대한 상세 설명을 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '코스에 대한 상세 설명을 입력하세요.',timeout: 2000});        
           return;
         }
         if (!$("#cmno").val() & $("#cmimage").prop("files").length===0) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '대표 이미지를 지정하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '대표 이미지를 지정하세요.',timeout: 2000});        
           return;
         }
         if (status!=="1" & $('ul#listUL li').length===0) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '경로가 하나 이상 지정되어야 합니다..',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '경로가 하나 이상 지정되어야 합니다..',timeout: 2000});        
           return;
         }
 
@@ -259,7 +259,7 @@
         </div>
     </dialog>    
 
-    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>
         <button class="mdl-snackbar__action" type="button"></button>
     </div>     

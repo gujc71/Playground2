@@ -12,28 +12,28 @@
     </style>   
     
     <script>
-      var snackbarLogin = null;
+      var snackbarMsg = null;
 
       window.onload = function () {
-        snackbarLogin = document.querySelector('#snackbarLogin');
+        snackbarMsg = document.querySelector('#snackbarMsg');
       }
 
       // Save
       function formSubmit(){
         if ($("#userid").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '아이디를 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '아이디를 입력해주세요.',timeout: 2000});        
           return;
         }
         if ($("#userpw").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '비밀번호를 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '비밀번호를 입력해주세요.',timeout: 2000});        
           return;
         }
         if ($("#usernm").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '이름을 입력해주세요.',timeout: 2000});        
           return;
         }
         if ($("#usermail").val().trim()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Email을 입력해주세요.',timeout: 2000});        
           return;
         }
         if (!confirm("회원가입을 하시겠습니까?")) {
@@ -85,7 +85,7 @@
       </main>
     </div>
 
-    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
       <div class="mdl-snackbar__text"></div>
       <button class="mdl-snackbar__action" type="button"></button>
   </div>     

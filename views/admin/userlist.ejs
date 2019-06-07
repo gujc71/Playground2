@@ -97,7 +97,8 @@
             var html = '<td>' + row.USERNM + '</td>' + 
                        '<td>' + row.USERID + '</td>' + 
                        '<td>' + row.USERMAIL + '</td>' + 
-                       '<td>' + row.ENTRYDATE + '</td>';
+                       '<td>' + row.ENTRYDATE + '</td>' + 
+                       '<td>' + row.CODENM + '</td>';
                                        
             li.html(html);
             $('#listUL').append(li);
@@ -126,6 +127,7 @@
                   <th>Name</th>
                   <th>ID</th>
                   <th>Email</th>
+                  <th>From</th>
                   <th>Join</th>
                 </tr>
               </thead>
@@ -137,6 +139,7 @@
                       <td><%=row.USERNM%></td>
                       <td><%=row.USERID%></td>
                       <td><%=row.USERMAIL%></td>
+                      <td><%=row.CODENM%></td>
                       <td><%=row.ENTRYDATE%></td>
                     </tr>
                 <%

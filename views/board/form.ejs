@@ -4,13 +4,13 @@
       <% include ../common/htmlHead.ejs %>
     <script>
       function formSubmit(){
-        var snackbarLogin = document.querySelector('#snackbarLogin');
+        var snackbarMsg = document.querySelector('#snackbarMsg');
         if ($("#brdtitle").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter board title.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter board title.',timeout: 2000});        
           return;
         }
         if ($("#brdmemo").val()==="") {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: 'Please enter board contents.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter board contents.',timeout: 2000});        
           return;
         }
         $("#inputForm").submit();
@@ -46,7 +46,7 @@
       </main>
     </div>
 
-    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>
         <button class="mdl-snackbar__action" type="button"></button>
     </div>     

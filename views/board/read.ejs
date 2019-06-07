@@ -1,7 +1,70 @@
 <!doctype html>
 <html lang="ko">
   <head>
-      <% include ../common/htmlHead.ejs %>
+    <% include ../common/htmlHead.ejs %>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/dialog-polyfill.css" />
+    <script src="/javascripts/dialog-polyfill.js"></script>
+    <script>
+    var snackbarMessage = null, 
+        dialogReply = null;
+
+    window.onload = function () {
+        snackbarMessage = document.querySelector('#snackbarMessage');
+
+        dialogReply = document.getElementById('dialogReply');
+        if (! dialogReply.showModal) {
+            dialogPolyfill.registerDialog(dialogReply);
+        }
+        dialogReply.querySelector('.close').addEventListener('click', function() {
+            dialogReply.close();
+        });
+    }
+
+    function ev_boardDelete(){
+        if (!confirm("삭제하시겠습니까?")) return;
+
+        location.href = "delete?brdno=<%=boardInfo.BRDNO%>";
+    }
+    // ////////////////////////////////////
+    function ev_replySave(suffix){
+        var rememo = $.trim($("#rememo"+suffix).val());
+        if (rememo==="") {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter reply.',timeout: 2000});        
+          return;
+        }
+        if (rememo.length> 500) {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please Enter 500 characters or less.',timeout: 2000});        
+          return;
+        }
+        $("#replyForm"+suffix).submit();
+    }
+
+    function ev_replyModifySave(){
+        var rememo = $.trim($("#mod_rememo").val());
+        if (rememo==="") {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please enter reply.',timeout: 2000});        
+          return;
+        }
+        if (rememo.length> 500) {
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: 'Please Enter 500 characters or less.',timeout: 2000});        
+          return;
+        }
+        $("#replyModifyForm").submit();
+    }
+
+    function ev_replyDelete(reno){
+        if (!confirm("삭제하시겠습니까?")) return;
+
+        location.href = "replyDelete?brdno=<%=boardInfo.BRDNO%>&reno=" + reno;
+    }
+
+    function ev_replyModify(reno){
+        $("#reno_mod").val(reno);
+        $("#rememo_mod").val($("#reno"+reno).text());
+        dialogReply.showModal();
+    }
+    
+  </script>  
   </head>
   <body>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
@@ -10,24 +73,81 @@
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
             <div class="mdl-card__title mdl-card--expand" style="width:100%">
-                <h6 class="mdl-card__title-text" style="font-size: 20px;"><%=row.BRDTITLE%></h6>
+                <h6 class="mdl-card__title-text" style="font-size: 20px;"><%=boardInfo.BRDTITLE%></h6>
             </div>
             <div class="mdl-card__supporting-text" style="min-height: 100px;">
-                <%=row.BRDMEMO%>
+                <%=boardInfo.BRDMEMO%>
             </div>
 
             <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#" onclick="history.back(-1)">
-                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">arrow_back</i></a>
-                <%if (userno == row.USERNO) { %>    
-                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="delete?brdno=<%=row.BRDNO%>">
+                <%if (userno == boardInfo.USERNO) { %>    
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="ev_boardDelete()">
                         <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">delete</i></a>
-                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="form?brdno=<%=row.BRDNO%>">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="form?brdno=<%=boardInfo.BRDNO%>">
                         <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">create</i> Modify</a>
                 <% } %>
             </div>
         </div>        
+
+        <div class="mdl-grid demo-content mdl-color--white mdl-shadow--2dp">
+            <div class="mdl-cell--7-col mdl-cell--12-col-tablet ">
+                <form action="replySave" id="replyForm" method="post">
+                    <input type="hidden" id="brdno" name="brdno" value="<%=boardInfo.BRDNO%>"/>
+                    <textarea id="rememo" name="rememo" rows="2" class="memoInput" placeholder="Input some reply..."></textarea>
+                </form>
+            </div>
+            <div class="mdl-card__media1 mdl-cell--5-col mdl-cell--12-col-tablet ">
+                <button class="mdl-button mdl-button--colored mdl-js-button mdl-button--raised" href="#" onclick="ev_replySave('')">
+                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">save</i> Reply Save</button>
+            </div>
+            <ul id="listUL" class="demo-list-two mdl-list">
+                <%
+                    replyList.forEach(function(row) {
+                %>                
+                    <li class="mdl-list__item mdl-list__item--two-line height_auto">
+                        <span class="mdl-list__item-primary-content height_auto">
+                            <%if (row.PHOTO) { %>    
+                                <img class="userAvatar" src="/common/getimage/<%=row.PHOTO%>" alt="UserPhoto"/>
+                            <% } else {%>
+                                <i class="material-icons mdl-list__item-avatar">person</i>
+                            <% } %>
+                            <span>
+                                <%=row.USERNM%>
+                                <span class="smallFont"><%=row.REDATE%></span>
+                                <% if (row.USERNO===userno) { %>    
+                                    <a onclick="ev_replyDelete(<%=row.RENO%>)" title="Delete"><i class="mdl-color-text--blue-grey-400 material-icons material-icons4reply" role="presentation">delete</i></a>
+                                    <a onclick="ev_replyModify(<%=row.RENO%>)" title="Modify"><i class="mdl-color-text--blue-grey-400 material-icons material-icons4reply" role="presentation">create</i> </a>
+                                <% } %>
+                            </span>
+                            <span class="mdl-list__item-sub-title" id="reno<%=row.RENO%>"><%=row.REMEMO%></span>
+                        </span>
+                    </li>
+                <%
+                    });
+                %>
+            </ul>            
+        </div>        
       </main>
     </div>
+
+    <dialog class="mdl-dialog" id="dialogReply">
+        <h4 class="mdl-dialog__title">Reply</h4>
+        <div class="mdl-dialog__content" style="padding: 5px 0px 0px 0px;">
+                <form action="replySave" id="replyForm_mod" method="post">
+                    <input type="hidden" id="brdno_mod" name="brdno" value="<%=boardInfo.BRDNO%>"/>
+                    <input type="hidden" id="reno_mod" name="reno"/>
+                    <textarea id="rememo_mod" name="rememo" rows="10" class="memoInput"></textarea>
+                </form>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button" onclick="ev_replySave('_mod')">Save</button>
+            <button type="button" class="mdl-button close">Close</button>
+        </div>
+    </dialog>  
+
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>   
   </body>
 </html>

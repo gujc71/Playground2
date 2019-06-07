@@ -31,22 +31,22 @@
       }
 
       function formSubmit(){
-        var snackbarLogin = document.querySelector('#snackbarLogin');
+        var snackbarMsg = document.querySelector('#snackbarMsg');
 
         if (!$('input[name="pgtype1"]:checked').val()) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 대분류를 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '장소 대분류를 입력하세요.',timeout: 2000});        
           return;
         }
         if (!$("#pgname").val()) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소명을 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '장소명을 입력하세요.',timeout: 2000});        
           return;
         }
         if (!$("#pgsize").val()) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '장소 면적을 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '장소 면적을 입력하세요.',timeout: 2000});        
           return;
         }
         if (!$("#pglat").val() || !$("#pglon").val()) {
-          snackbarLogin.MaterialSnackbar.showSnackbar({message: '위도 / 경도를 입력하세요.',timeout: 2000});        
+          snackbarMsg.MaterialSnackbar.showSnackbar({message: '위도 / 경도를 입력하세요.',timeout: 2000});        
           return;
         }
         $("#inputForm").submit();
@@ -202,7 +202,7 @@
         </div>
     </dialog>  
 
-    <div id="snackbarLogin" class="mdl-js-snackbar mdl-snackbar">
+    <div id="snackbarMsg" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>
         <button class="mdl-snackbar__action" type="button"></button>
     </div>     
