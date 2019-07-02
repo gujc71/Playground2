@@ -10,7 +10,7 @@ function getMarker(place) {
             '                <div>';
             if (place.PGTYPE2NM) str += place.PGTYPE2NM;
             if (place.PGURL) str += ' <a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a>';
-            str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank" class="link">길찾기</a>' + 
+            str += '               <a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLAT + ',' + place.PGLON + '" target="_blank" class="link">길찾기</a>' + 
             '                </div>' + 
             '            </div>' + 
             '        </div>' + 
@@ -26,8 +26,8 @@ function getMarker4Event(place) {
             '        <div class="title">' + place.SEPLACE +'</div>' + 
             '        <div class="body">' + 
             '            <div class="desc4event">' + 
-            '                <div><div class="eventMarkerAddr">' + place.SEADDR + '</div> <a href="http://map.daum.net/link/to/' + place.SEPLACE + ',' + place.SELON + ',' + place.SELAT + '" target="_blank" class="eventlink">길찾기</a>'+
-            '                  <a href="myTownMap?ib=' + place.SELAT + '&jb=' + place.SELON + '" target="_blank" class="eventlink">주변검색</a> '+
+            '                <div><div class="eventMarkerAddr">' + place.SEADDR + '</div> <a href="http://map.daum.net/link/to/' + place.SEPLACE + ',' + place.SELAT + ',' + place.SELON + '" target="_blank" class="eventlink">길찾기</a>'+
+            '                  <a href="myTownMap?lat=' + place.SELAT + '&lng=' + place.SELON + '" target="_blank" class="eventlink">주변검색</a> '+
             '                </div>' +
             '                <div>';
     list.forEach(function(element) {

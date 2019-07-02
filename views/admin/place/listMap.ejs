@@ -10,7 +10,7 @@
 
       window.onload = function () {
         var placelist = <%-JSON.stringify(placelist).replace(/null/gi, '""')%>;
-        var centerPos = {ib:'126.97684292625047', jb:'37.57590409118165'};
+        var centerPos = {lng:'126.97684292625047', lat:'37.57590409118165'};
 
         var positions = [];
 
@@ -18,14 +18,14 @@
           var content = getMarker(place);
           var posInfo =  {
             content: content, 
-            latlng: new daum.maps.LatLng(place.PGLON, place.PGLAT),
+            latlng: new daum.maps.LatLng(place.PGLAT, place.PGLON),
             place: place
           };
           positions.push(posInfo);
         });
         
 
-        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions);
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.lat, centerPos.lng), positions);
 
         $("input[name='placetype']").prop("checked", true);
       }

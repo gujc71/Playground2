@@ -57,7 +57,7 @@
 
       function handleNext() {
         let pos = marker.getPosition();
-        location.href = "myTownMap?ib=" + pos.ib + "&jb=" + pos.jb
+        location.href = "myTownMap?lng=" + pos.getLng() + "&lat=" + pos.getLat();
       }
 
       function ev_showDialog(){

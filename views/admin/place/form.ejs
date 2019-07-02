@@ -45,7 +45,7 @@
           snackbarMsg.MaterialSnackbar.showSnackbar({message: '장소 면적을 입력하세요.',timeout: 2000});        
           return;
         }
-        if (!$("#pglat").val() || !$("#pglon").val()) {
+        if (!$("#pglat").val() || !$("#pglng").val()) {
           snackbarMsg.MaterialSnackbar.showSnackbar({message: '위도 / 경도를 입력하세요.',timeout: 2000});        
           return;
         }
@@ -66,8 +66,8 @@
             xhr.setRequestHeader("Authorization", "KakaoAK <%=appkey%>");
           },
           success: function(ret){
-            $("#pglat").val(ret.documents[0].x);
-            $("#pglon").val(ret.documents[0].y);
+            $("#pglat").val(ret.documents[0].y);
+            $("#pglng").val(ret.documents[0].x);
           },
           error: function (e) {
               console.log("some error", e);
@@ -76,14 +76,14 @@
       }
 
       function getMap() {
-        document.getElementById("mapFrame").contentWindow.loadMap($("#pglat").val(), $("#pglon").val());
+        document.getElementById("mapFrame").contentWindow.loadMap($("#pglat").val(), $("#pglng").val());
         dialog.showModal();
       }
       function ev_getPosition() {
         var pos = document.getElementById("mapFrame").contentWindow.getPosition();
 
-        $("#pglat").val(pos.ib);
-        $("#pglon").val(pos.jb);
+        $("#pglat").val(pos.lat);
+        $("#pglng").val(pos.lng);
 
         dialog.close();
       }
@@ -144,7 +144,7 @@
                     <span class="listTitle">위도</span>
                     <input class="mdl-textfield__input" type="text" id="pglat" name="pglat" value="<%=row.PGLAT%>" readonly/>
                     <span class="listTitle">경도</span>
-                    <input class="mdl-textfield__input" type="text" id="pglon" name="pglon" value="<%=row.PGLON%>" readonly/>
+                    <input class="mdl-textfield__input" type="text" id="pglng" name="pglng" value="<%=row.PGLON%>" readonly/>
                     <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="getMap()"><i class="material-icons">map</i> </button>
                 </li>
                 <li class="mdl-list__item">

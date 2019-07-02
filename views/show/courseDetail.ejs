@@ -47,14 +47,14 @@
 
       window.onload = function () {
         var dtlList = <%-JSON.stringify(dtlList).replace(/null/gi, '""')%>;
-        var centerPos = {ib:<%=mapInfo.ib%>, jb:<%=mapInfo.jb%>};
+        var centerPos = {lng:<%=mapInfo.lng%>, lat:<%=mapInfo.lat%>};
         var positions = [];
 
         dtlList.forEach(function(place) {
           var content = getMarker(place);
           var posInfo =  {
             content: content, 
-            latlng: new daum.maps.LatLng(place.PGLON, place.PGLAT),
+            latlng: new daum.maps.LatLng(place.PGLAT, place.PGLON),
             place: place
           };
           positions.push(posInfo);
@@ -66,13 +66,13 @@
             var str = "";
             if (place.PGTYPE2NM) str = place.PGTYPE2NM;
             if (place.PGURL) str += ' <a href="' + place.PGURL + '" target="_blank" class="link">홈페이지</a> ';
-            str += '<a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLON + ',' + place.PGLAT + '" target="_blank" class="link">길찾기</a>'; 
+            str += '<a href="http://map.daum.net/link/to/' + place.PGNAME + ',' + place.PGLAT + ',' + place.PGLON + '" target="_blank" class="link">길찾기</a>'; 
             $("#pgetc").html(str);
             
             dialogPlace.showModal();
           });
         });
-        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions);
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.lat, centerPos.lng), positions);
 
         $("input[name='placetype']").prop("checked", true);
 
@@ -108,7 +108,7 @@
       function ev_showOthers() {
         if (markerInfo.markerList.length===0) return;
         var pos = markerInfo.markerList[0].getPosition();
-        location.href = "/show/myTownMap?ib=" + pos.ib + "&jb=" + pos.jb
+        location.href = "/show/myTownMap?lng=" + pos.lng + "&lat=" + pos.lat
       }
       function ev_toTop() {
         $('main').animate({ scrollTop: 0 }, 'slow');

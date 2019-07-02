@@ -189,7 +189,7 @@ INSERT INTO `TBL_COURSEMST` (`CMNO`, `USERNO`, `CMTITLE`, `CMDESC`, `ENTRYDATE`,
     (7, 1, '풍물 시장과 도서관', '<p>풍물 시장들</p>', now(), now(), 'N', '3', NULL);
 
 
-INSERT INTO `TBL_PLAYGROUND` (`PGNO`, `PGNAME`, `PGLAT`, `PGLON`, `PGURL`, `PGTEL`, `PGADDR`, `PGTYPE1`, `PGTYPE2`, `PGSIZE`, `PGPRICE`, `PGDESC`, `PGEXTRA1`, `PGEXTRA2`, `PGEXTRA3`, `UPDATEDATE`, `DELETEFLAG`) VALUES
+INSERT INTO `TBL_PLAYGROUND` (`PGNO`, `PGNAME`, `PGLON`, `PGLAT`, `PGURL`, `PGTEL`, `PGADDR`, `PGTYPE1`, `PGTYPE2`, `PGSIZE`, `PGPRICE`, `PGDESC`, `PGEXTRA1`, `PGEXTRA2`, `PGEXTRA3`, `UPDATEDATE`, `DELETEFLAG`) VALUES
     ('A000000143', '상상노리 키즈카페', 127.0686722, 37.6398582, 'http://www.playtime.co.kr/KO/index.php', '070-7721-8970', '서울특별시 노원구 동일로204가길 12 (중계동, 홈플러스)', 'A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-05-12 23:42:19', 'N'),
     ('A000000190', '어린이감각놀이터 디키디키', 127.0096283, 37.5668144, 'http://dikidiki.co.kr/main.do', '02-2153-0760', '서울특별시 중구 을지로 281 (을지로7가, 동대문디자인플라자(DDP) 배움터 4층)', 'A', 'B', 105.6, '', '', NULL, NULL, '', '2019-05-12 23:42:19', 'N'),
     ('A000000280', '타요키즈카페 동대문두타몰점', 127.0087738, 37.5688858, 'http://www.tayokidscafe.co.kr/new/main/main.html', '02-3398-4339', '서울특별시 중구 장충단로 275 (을지로6가, 두산타워빌딩 5층 5004~5009호, 5318호 일부)', 'A', NULL, 84.2, NULL, NULL, NULL, NULL, NULL, '2019-05-12 23:42:19', 'N'),

@@ -14,12 +14,12 @@ router.get('/myTown', function(req,res,next){
 });
 
 router.get('/myTownMap', function(req,res,next){
-    let param = {ib: req.query.ib, jb: req.query.jb}
+    let param = {lat: req.query.lat, lng: req.query.lng}
 
     pool.getConnection(function (err, connection) {
-        var sql = "SELECT PGNO, PGNAME, PGADDR, PGLAT, PGURL, PGLON, PGTYPE1, PGTYPE2, CC.CODENM PLACEICON " +
+        var sql = "SELECT PGNO, PGNAME, PGADDR, PGURL, PGLAT, PGLON, PGTYPE1, PGTYPE2, CC.CODENM PLACEICON " +
                   " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) PGTYPE2NM " +
-                  "     , (6371*ACOS(COS(RADIANS("+param.jb+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.ib+"))+SIN(RADIANS("+param.jb+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
+                  "     , (6371*ACOS(COS(RADIANS("+param.lng+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.lat+"))+SIN(RADIANS("+param.lng+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
                   "  FROM TBL_PLAYGROUND TPG" + 
                   " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
                   " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
@@ -33,6 +33,7 @@ router.get('/myTownMap', function(req,res,next){
         });
     }); 
 });
+
 // /////////////////////////////////////////////////////////////
 function getListSQL(page) {
     if (!page) page=1;
@@ -100,7 +101,7 @@ router.get('/courseDetail', function(req,res,next){
                     connection.release();
                     if (err) console.error("err : " + err);
         
-                    res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:dtlList, mapInfo: {ib: dtlList[0].PGLAT, jb: dtlList[0].PGLON}, appkey: APPKEY });
+                    res.render('show/courseDetail', {mstInfo: mstInfo[0], dtlList:dtlList, mapInfo: {lat: dtlList[0].PGLAT, lng: dtlList[0].PGLON}, appkey: APPKEY });
                 });            
             });
         });

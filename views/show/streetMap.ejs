@@ -14,21 +14,21 @@
 
       window.onload = function () {
         var placelist = <%-JSON.stringify(placelist).replace(/null/gi, '""')%>;
-        var centerPos = {ib:126.97181045851413, jb:37.55630092804091};
+        var centerPos = {lat:37.55630092804091, lng:126.97181045851413};
         var positions = [];
 
         placelist.forEach(function(place) {
           var content = getMarker4Event(place);
           var posInfo =  {
             content: content, 
-            latlng: new daum.maps.LatLng(place.SELON, place.SELAT),
+            latlng: new daum.maps.LatLng(place.SELAT, place.SELON),
             place: place
           };
           positions.push(posInfo);
         });
         
 
-        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.jb, centerPos.ib), positions, 8);
+        markerInfo = showMap(document.getElementById('mytown_map'), new daum.maps.LatLng(centerPos.lat, centerPos.lng), positions, 8);
 
         var datepicker = $('#eventDate').datepicker({
 							autoClose: true,

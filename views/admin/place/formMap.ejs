@@ -23,10 +23,10 @@
         map = new daum.maps.Map(mapContainer, mapOption);
       }
 
-      function loadMap(pglat, pglon) {
-        if (!pglon) pglon = 37.57590409118165;
-        if (!pglat) pglat = 126.97684292625047;
-        const sPosition = new daum.maps.LatLng(pglon, pglat);
+      function loadMap(pglat, pglng) {
+        if (!pglat) pglat = 37.57590409118165;
+        if (!pglng) pglng = 126.97684292625047;
+        const sPosition = new daum.maps.LatLng(pglat, pglng);
         displayMarker(map, sPosition);
       }
       marker = null;
@@ -48,7 +48,7 @@
 
       function getPosition() {
         let pos = marker.getPosition();
-        return pos;//.ib + "&jb=" + pos.jb
+        return {lat: pos.getLat(), lng: pos.getLng()};
       }
     </script>
 </head>
