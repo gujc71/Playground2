@@ -108,7 +108,7 @@
       function ev_showOthers() {
         if (markerInfo.markerList.length===0) return;
         var pos = markerInfo.markerList[0].getPosition();
-        location.href = "/show/myTownMap?lng=" + pos.lng + "&lat=" + pos.lat
+        location.href = "/show/myTownMap?lng=" + pos.getLng() + "&lat=" + pos.getLat()
       }
       function ev_toTop() {
         $('main').animate({ scrollTop: 0 }, 'slow');

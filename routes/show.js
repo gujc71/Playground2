@@ -25,11 +25,33 @@ router.get('/myTownMap', function(req,res,next){
                   " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
                   "HAVING DISTANCE <= 2" + 
                   " ORDER BY PGNAME";
-
+console.log(sql);
         connection.query(sql, function (err, rows) {
             connection.release();
             if (err) console.error("err : " + err);
             res.render('show/myTownMap', {mapInfo: param, placelist:rows, appkey: APPKEY});
+        });
+    }); 
+});
+
+router.get('/myTownMapService', function(req,res,next){
+    let param = {lat: req.query.lat, lng: req.query.lng}
+
+    pool.getConnection(function (err, connection) {
+        var sql = "SELECT pgno, pgname, pgaddr, pgurl, pglat, pglon, pgtype1, pgtype2, cc.codenm placeicon " +
+                  " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) pgtype2nm " +
+                  "     , (6371*ACOS(COS(RADIANS("+param.lng+"))*COS(RADIANS(PGLON))*COS(RADIANS(PGLAT)-RADIANS("+param.lat+"))+SIN(RADIANS("+param.lng+"))*SIN(RADIANS(PGLON))))	AS DISTANCE" + 
+                  "  FROM TBL_PLAYGROUND TPG" + 
+                  " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+                  " WHERE CLASSNO='e' AND DELETEFLAG='N' " + 
+                  "HAVING DISTANCE <= 2" + 
+                  " ORDER BY PGNAME";
+
+        connection.query(sql, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+            res.json(rows);
+            //res.json({placelist:rows});
         });
     }); 
 });
@@ -43,7 +65,6 @@ function getListSQL(page) {
               " WHERE DELETEFLAG='N' AND CMSTATUS='3'" +
               " ORDER BY TCM.CMNO DESC" + 
               " LIMIT " + ((page-1)*20) + ", 20";    
- console.log(sql);
     return sql;
 }
 
@@ -107,6 +128,68 @@ router.get('/courseDetail', function(req,res,next){
         });
     }); 
 });
+
+
+router.get('/courseListService', function(req,res,next){
+    let sql = "SELECT cmno, cmtitle, cmimage, DATE_FORMAT(UPDATEDATE,'%Y-%m-%d') updatedate" +
+              "  FROM TBL_COURSEMST TCM " +
+              " WHERE DELETEFLAG='N' AND CMSTATUS='3'" +
+              " ORDER BY TCM.CMNO DESC" ;    
+
+    pool.getConnection(function (err, connection) {
+        connection.query(sql, function (err, rows) {
+            connection.release();
+            if (err) console.error("err : " + err);
+
+            res.json(rows);
+        });
+    }); 
+});
+
+router.get('/courseDetailMService', function(req,res,next){
+    if (!req.query.cmno) {
+        res.render('common/error');                
+        return;
+    }
+    pool.getConnection(function (err, connection) {
+        let sql = "SELECT cmno, cmtitle, cmdesc, DATE_FORMAT(UPDATEDATE,'%Y-%m-%d') updatedate" + 
+                  "  FROM TBL_COURSEMST TCM " +
+                  " WHERE DELETEFLAG='N' AND CMSTATUS='3' AND CMNO=" + req.query.cmno;
+        connection.query(sql, function (err, mstInfo) {
+            if (err) console.error("err : " + err);
+            if (mstInfo.length===0) {
+                connection.release();
+                res.render('common/error');                
+                return;
+            }
+
+            res.json( mstInfo[0]);
+        });
+        sql = "UPDATE TBL_COURSEMST SET CMREAD=CMREAD+1 WHERE CMNO="+req.query.cmno
+        connection.query(sql, function (err, rows) {
+            connection.release();
+        });            
+    }); 
+});
+
+router.get('/courseDetailDService', function(req,res,next){
+    let sql = "";
+    pool.getConnection(function (err, connection) {
+        sql = "SELECT tcd.cmno, tpg.pgno, tpg.pgname, tpg.pgaddr, pgtype1, pgtype2, cc.codenm placeicon, pglat, pglon, pgurl" + 
+                " 	, (SELECT CODENM FROM COM_CODE CCT WHERE  CCT.CLASSNO='t' AND CCT.CODECD = TPG.PGTYPE2) pgtype2nm " +
+                "  FROM TBL_COURSEDTL TCD" + 
+                " INNER JOIN TBL_PLAYGROUND TPG ON TPG.PGNO=TCD.PGNO" + 
+                " INNER JOIN COM_CODE CC ON TPG.PGTYPE1=CC.CODECD " +
+                " WHERE CLASSNO='e' AND TCD.CMNO="+req.query.cmno +
+                " ORDER BY CDORDER";
+        connection.query(sql, function (err, dtlList) {
+            if (err) console.error("err : " + err);
+    
+            res.json( dtlList);
+        });
+    }); 
+});
+
 // ====================================================================
 
 router.get('/getCourseReply', function(req,res,next){

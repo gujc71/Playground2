@@ -114,10 +114,10 @@ function addMarker(map, positions, markerList) {
         });
         marker.infowindow = infowindow;
         
-        if (positions.length===1) {
+        /*if (positions.length===1) {
 
             infoopen(map, marker);
-        }
+        }*/
 
         daum.maps.event.addListener(marker, 'click', clickListener);
     }
